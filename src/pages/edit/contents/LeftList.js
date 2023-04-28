@@ -64,8 +64,8 @@ const LeftList = () => {
                                         <ul className={`${(detail.viewing === eachSection.id) ? 'd-block' : 'd-none'} no-list-style pl-20`} >
                                             {(eachSection.subsections.map((subSection) => (
                                                 <li id={subSection.id} key={subSection.id} style={{ padding: '0' }}>
-                                                    <span className={`${((detail.activeSub === subSection.id) && (detail.activeLesson === "")) ? 'activeTab' : ''} w-100 d-flex alignCenter p-1`} onClick={e => detail.toggleActiveSub(subSection.id, eachSection.id, subSection, eachSection)}>
-                                                        <span className='leftIds' onClick={e => detail.toggleActiveSub(subSection.id, eachSection.id, subSection, eachSection)}>
+                                                    <span className={`${((detail.activeSub === subSection.id) && (detail.activeLesson === "")) ? 'activeTab' : ''} w-100 d-flex alignCenter p-1`} onClick={e => detail.toggleActiveSub(subSection.id, eachSection.id, subSection, eachSection, eachSection.position_id, subSection.position_id)}>
+                                                        <span className='leftIds'>
                                                             {subSection.position_id}
                                                         </span>
                                                         <span className={`fa mr-15 ${(detail.activeSub === subSection.id) ? 'fa-caret-down' : 'fa-caret-right'}`}></span>

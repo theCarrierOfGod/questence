@@ -121,6 +121,49 @@ const ContentNav = () => {
             });
     }
 
+    const saveNewLesson = (e) => {
+        e.preventDefault();
+        let positionID = newHook.nextLes;
+        if (newSubTitle.length === 0) {
+            alert('Title is required');
+            return false;
+        }
+
+        var config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${hook.api}/i/course-lesson/`,
+            headers: {
+                'Authorization': auth.token
+            },
+            data: {
+                "course_id": id,
+                "code": basic.courseCode,
+                'name': basic.courseName,
+                "position_id": positionID,
+                "title": newSubTitle,
+                "section_id": detail.viewing,
+                "subsection_id": detail.activeSub
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                if (response.data.id) {
+                    NotificationManager.success('Created', 'New sub section', 6000);
+                    setNewSubTitle('');
+                    newHook.toggleAddSubsSection();
+                    detail.getDetails(id);
+                } else {
+                    NotificationManager.error(response.data.detail, 'New sub section', 5000)
+                }
+                console.log(response);
+            })
+            .catch(function (error) {
+                NotificationManager.error(error.message, 'New sub Section', 6000)
+            });
+    }
+
     useEffect(() => {
         detail.getDetails(id);
         basic.getCourse(id);
@@ -234,6 +277,59 @@ const ContentNav = () => {
                                     placeholder=""
                                     aria-describedby="helpId"
                                     value={newHook.nextSub}
+                                    readonly={true}
+                                />
+                            </div>
+                            <div className="form-group mb-3">
+                                <label className="label" htmlFor="courseName">
+                                    Title
+                                </label>
+                                <input
+                                    type="text"
+                                    name="sectionTitle"
+                                    required
+                                    onChange={(e) => setNewSubTitle(e.target.value)}
+                                    id="subsectionTitle"
+                                    className="form-control"
+                                    placeholder=""
+                                    aria-describedby="helpId"
+                                />
+                            </div>
+                        </div>
+                        <div className={`${style.saveModal} modal-footer`}>
+                            <button type="submit" className="btn btn-secondary" data-dismiss="modal">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div className={newHook.newLes ? `${style.modal} modal d-block` : `modal d-none`} id="exampleModalCenter" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <form className="modal-dialog modal-dialog-centered" role="document" onSubmit={saveNewLesson}>
+                    <div className="modal-content p-3">
+                        <div className={`${style.modalHeader} modal-header`}>
+                            <h5 className={`${style.modalTitle} modal-title`} id="exampleModalLongTitle">
+                                Add new lesson
+                            </h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={newHook.toggleAddLesson}>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className={`${style.modalBody} modal-body`}>
+                            <div className="form-group mb-3">
+                                <label className="label" htmlFor="courseCode">
+                                    Position ID
+                                </label>
+                                <input
+                                    type="text"
+                                    name="positionID"
+                                    id="positionID"
+                                    required
+                                    className="form-control"
+                                    placeholder=""
+                                    aria-describedby="helpId"
+                                    value={newHook.nextLes}
                                     readonly={true}
                                 />
                             </div>

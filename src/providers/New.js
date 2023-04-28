@@ -22,8 +22,9 @@ export const New = ({ children }) => {
     const [addSection, setAddSection] = useState(false);
     const [now, setNow] = useState('');
     const [nextSub, setNextSub] = useState(0);
-    const [sectionID, setSectionID] = useState('');
+    const [nextLes, setNextLes] = useState('');
     const [newSub, setNewSub] = useState(false);
+    const [newLes, setNewLes] = useState(false);
 
     const addNew = () => {
         if (addNow) {
@@ -148,12 +149,20 @@ export const New = ({ children }) => {
     const toggleAddSubsSection = (id) => {
         if(!newSub) {
             setNextSub(detail.getSubPosition());
-            setNow('sub');
             setNewSub(true);
         } else {
-            setNow('');
             setNewSub(false)
             setNextSub('');
+        }
+    }
+
+    const toggleAddLesson = (id) => {
+        if(!newLes) {
+            setNextLes(detail.getLesPosition());
+            setNewLes(true);
+        } else {
+            setNewLes(false)
+            setNextLes('');
         }
     }
 
@@ -167,7 +176,7 @@ export const New = ({ children }) => {
     
 
     return (
-        <NewContext.Provider value={{ nextSub, addSection, newSub, nextSub, toggleAddSubsSection, setAddSection, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
+        <NewContext.Provider value={{ newLes, nextLes, addSection, newSub, nextSub, toggleAddLesson, toggleAddSubsSection, setAddSection, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
             {children}
         </NewContext.Provider>
     )
