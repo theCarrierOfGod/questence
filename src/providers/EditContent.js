@@ -43,6 +43,26 @@ export const EditCon = ({ children }) => {
         setCourseTab(tabname);
     }
 
+    const [section, setSection] = useState(false);
+    const [subsection, setSubsection] = useState(false);
+
+    const toggleSection = () => {
+        if (section) {
+            setSection(false);
+            setSubsection(false);
+        } else {
+            setSection(true);
+        }
+    }
+
+    const toggleSubSection = () => {
+        if (subsection) {
+            setSubsection(false);
+        } else {
+            setSubsection(true);
+        }
+    } 
+
     useEffect(() => {
         setIsEdit(false);
         setContentEdit(false);
@@ -52,7 +72,7 @@ export const EditCon = ({ children }) => {
     }, [location.key]);
 
     return (
-        <EditConContext.Provider value={{ isEdit, toggleContentEdit, editing, contentEdit, setReadOnly, setIsEdit, setActiveEdit, toggleEdit, activeEdit, courseTab, setCourseTab, goToTab, courseStatus, readOnly, }}>
+        <EditConContext.Provider value={{ isEdit, section, subsection, toggleSection, toggleSubSection, toggleContentEdit, editing, contentEdit, setReadOnly, setIsEdit, setActiveEdit, toggleEdit, activeEdit, courseTab, setCourseTab, goToTab, courseStatus, readOnly, }}>
             {children}
         </EditConContext.Provider>
     )

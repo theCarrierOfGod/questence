@@ -44,7 +44,6 @@ button.menu-link {
     background: rgba(0, 121, 140, 0.1);
     border-radius: 15px 0px 0px 15px;
     width: 85px;
-
 }
 
 .rightStraight {
@@ -58,7 +57,7 @@ button.menu-link {
 
 .leftIds {
     position: absolute;
-    left: 5px;
+    left: 8px;
     font-weight: bolder;
 }
 

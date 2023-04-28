@@ -1,23 +1,29 @@
 import axios from "axios";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./Auth";
 import { useHook } from "./Hook";
+import { useDetail } from "./Detail";
+import { useLocation } from 'react-router-dom';
 
 const NewContext = createContext(null);
 
 export const New = ({ children }) => {
 
     const auth = useAuth();
+    const detail = useDetail();
     const hook = useHook();
-
-
+    const location = useLocation();
     const [addNow, setAddNow] = useState(false);
     const [newCourseName, setNewCourseName] = useState(false);
     const [newCourseCode, setNewCourseCode] = useState(false);
     const [programs, setPrograms] = useState([]);
     const [programCount, setProgramCount] = useState(0);
     const [loadingMessage, setLoadingMessage] = useState('Fetching data...');
-    const [addSection, setAddSection] = useState(false)
+    const [addSection, setAddSection] = useState(false);
+    const [now, setNow] = useState('');
+    const [nextSub, setNextSub] = useState(0);
+    const [sectionID, setSectionID] = useState('');
+    const [newSub, setNewSub] = useState(false);
 
     const addNew = () => {
         if (addNow) {
@@ -139,8 +145,29 @@ export const New = ({ children }) => {
             });
     }
 
+    const toggleAddSubsSection = (id) => {
+        if(!newSub) {
+            setNextSub(detail.getSubPosition());
+            setNow('sub');
+            setNewSub(true);
+        } else {
+            setNow('');
+            setNewSub(false)
+            setNextSub('');
+        }
+    }
+
+    useEffect(() => {
+      setNow('');
+    
+      return () => {
+        console.log(true);
+      }
+    }, [location])
+    
+
     return (
-        <NewContext.Provider value={{ addSection, setAddSection, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
+        <NewContext.Provider value={{ nextSub, addSection, newSub, nextSub, toggleAddSubsSection, setAddSection, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
             {children}
         </NewContext.Provider>
     )

@@ -14,7 +14,7 @@ export const SubContent = ({ children }) => {
 
     const [sections, setSections] = useState([]);
     const [gettingContent, setGettingContent] = useState(true);
-    const [contentError, setContentError] = useState(false);
+    const [contentError, setContentError] = useState(false); 
 
     const getContent = (id) => {
         var config = {
