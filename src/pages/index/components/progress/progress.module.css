@@ -1,0 +1,124 @@
+.progressBox {
+    min-height: 350px;
+    width: 100%;
+    background: rgba(0, 121, 140, 0.05);
+    border-radius: 15px 15px 0px 0px;
+}
+
+.progressFooter {
+    min-height: 70px;
+    background: #00798C;
+    border-radius: 0px 0px 15px 15px;
+    color: #ffffff;
+    padding: 0px 10px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.progressRing {
+    display: flex;
+    width: 200px;
+    height: 200px;
+    border: 20px solid #00798C;
+    border-radius: 100%;
+    align-content: center;
+    text-align: center;
+    align-items: center;
+    /* line-height: 100px; */
+}
+
+
+
+/* Course box styles */
+
+.courseBox {
+    background: #F2F2F2;
+    border-radius: 15px;
+    min-height: 300px;
+}
+
+.menu {
+    padding-top: 12px;
+}
+
+.menuTitle {
+    font-size: 16px;
+    width: max-content;
+    font-weight: 700;
+    font-family: 'Raleway';
+}
+
+.courseList {
+    border-top: 0.3px solid #000000;
+}
+
+.reportText>h3 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+}
+
+.reportText>h4 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 20px;
+    color: #000000;
+}
+
+/* Add New Course Modal  */
+
+.modal {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.saveModal {
+    justify-content: left !important;
+    border: none !important;
+}
+
+.saveModal>button {
+    background: #00798C;
+    border-radius: 10px;
+    width: 200px;
+    border: none;
+}
+
+.saveModal>button:hover,
+.saveModal>button:active {
+    background: #00798C;
+}
+
+.modalHeader {
+    border: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.modalTitle {
+    margin-bottom: 0 !important;
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.modalBody {
+    margin: var(--bs-modal-padding);
+    border-top: 0.5px solid #dee2e6;
+    padding: 10px 0px !important;
+}
+
+.modalBody2 {
+    margin: var(--bs-modal-padding);
+    padding: 10px 0px !important;
+}

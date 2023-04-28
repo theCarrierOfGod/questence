@@ -1,0 +1,31 @@
+.grow {
+    flex-grow: 1;
+    text-align: center;
+    height: 50px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.tabFlex {
+    display: flex;
+}
+
+.grow:hover {
+    cursor: pointer;
+}
+
+.active {
+    background: #00798C;
+    border-radius: 15px;
+    color: white;
+}
+
+@media (max-width:576px) {
+    .tabFlex {
+        flex-wrap: wrap;
+    }
+    .grow {
+        width: 25%;
+    }
+}
