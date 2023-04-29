@@ -3,12 +3,14 @@ import { useAuth } from '../providers/Auth';
 import style from './login.module.css';
 import { Link } from 'react-router-dom';
 import Logo from '../images/logo.png'
+import { NotificationContainer } from 'react-notifications';
 
 
 const Login = () => {
     const auth = useAuth()
     return (
         <>
+            <NotificationContainer/>
             <nav className={`${style.isNavbar} navbar navbar-expand-sm`}>
                 <div className='container d-flex justify-content-between'>
                     <Link className={`${style.navTitle} navbar-brand mr-3`} to="/">

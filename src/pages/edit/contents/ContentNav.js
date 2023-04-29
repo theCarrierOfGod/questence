@@ -39,8 +39,121 @@ const ContentNav = () => {
         }
     }
 
+    const deleteLesson = () => {
+        if (window.confirm("Are you sure you want to delete this lesson?") === true) {
+            NotificationManager.info('Please wait while lesson deletes', 'Delete lesson', 5000)
+            const params = {
+                id: detail.activeLesson
+            };
+            const options = {
+                method: 'DELETE',
+                body: JSON.stringify(params),
+                headers: {
+                    'Authorization': auth.token
+                },
+            };
+
+            fetch(`${hook.api}/i/course-lesson/`, options)
+                .then(response => response.json())
+                .then(response => {
+                    // Do something with response.
+                    console.log(response)
+                    if (response.message) {
+                        NotificationManager.success(response.message, 'Delete lesson', 5000);
+                        detail.getDetails(id);
+                    } else {
+                        NotificationManager.error('Error while deleting lesson', 'Delete lesson', 5000)
+                    }
+                })
+                .catch(err => {
+                    NotificationManager.error('Error while deleting lesson', 'Delete lesson', 5000)
+                })
+        }
+    }
+
+    const deleteSubSection = () => {
+        if (window.confirm("Are you sure you want to delete this subsection?") === true) {
+            NotificationManager.info('Please wait while subsection deletes', 'Delete Subection', 5000)
+            const params = {
+                id: detail.activeSub
+            };
+            const options = {
+                method: 'DELETE',
+                body: JSON.stringify(params),
+                headers: {
+                    'Authorization': auth.token
+                },
+            };
+
+            fetch(`${hook.api}/i/course-subsection/`, options)
+                .then(response => response.json())
+                .then(response => {
+                    // Do something with response.
+                    console.log(response)
+                    if (response.message) {
+                        NotificationManager.success(response.message, 'Delete Subsection', 5000);
+                        detail.getDetails(id);
+                    } else {
+                        NotificationManager.error('Error while deleting subsection', 'Delete Subsection', 5000)
+                    }
+                })
+                .catch(err => {
+                    NotificationManager.error('Error while deleting subsection', 'Delete Subsection', 5000)
+                })
+        }
+    }
+
+    const deleteSection = () => {
+        if (window.confirm("Are you sure you want to delete this section?") === true) {
+            NotificationManager.info('Please wait while section deletes', 'Delete Section', 5000)
+            const params = {
+                id: detail.viewing
+            };
+            const options = {
+                method: 'DELETE',
+                body: JSON.stringify(params),
+                headers: {
+                    'Authorization': auth.token
+                },
+            };
+
+            fetch(`${hook.api}/i/course-section/`, options)
+                .then(response => response.json())
+                .then(response => {
+                    // Do something with response.
+                    console.log(response)
+                    if (response.message) {
+                        NotificationManager.success(response.message, 'Delete Section', 5000);
+                        detail.getDetails(id);
+                    } else {
+                        NotificationManager.error('Error while deleting section', 'Delete Section', 5000)
+                    }
+                })
+                .catch(err => {
+                    NotificationManager.error('Error while deleting section', 'Delete Section', 5000)
+                })
+        }
+    }
+
+
+
+    const deleteSelected = () => {
+        if (edit.isEdit) {
+            if (detail.activeLesson !== '') {
+                deleteLesson();
+            } else if (detail.activeSub !== '') {
+                deleteSubSection();
+            } else if (detail.viewing !== '') {
+                deleteSection();
+            }
+        } else {
+            NotificationManager.warning('Page not yet editable', 'DELETE', 5000);
+        }
+    }
+
     const saveNewSection = (e) => {
         e.preventDefault();
+        NotificationManager.info('Creating...', 'New section', 6000);
         let positionID = '0' + (detail.sectionCount + 1);
         if (sectionTitle.length === 0) {
             alert('Section title is required');
@@ -81,6 +194,7 @@ const ContentNav = () => {
 
     const saveNewSubSection = (e) => {
         e.preventDefault();
+        NotificationManager.info('Creating...', 'New sub section', 6000);
         let positionID = newHook.nextSub;
         if (newSubTitle.length === 0) {
             alert('Title is required');
@@ -123,6 +237,7 @@ const ContentNav = () => {
 
     const saveNewLesson = (e) => {
         e.preventDefault();
+        NotificationManager.info('Creating...', 'New lesson', 6000);
         let positionID = newHook.nextLes;
         if (newSubTitle.length === 0) {
             alert('Title is required');
@@ -152,7 +267,7 @@ const ContentNav = () => {
                 if (response.data.id) {
                     NotificationManager.success('Created', 'New sub section', 6000);
                     setNewSubTitle('');
-                    newHook.toggleAddSubsSection();
+                    newHook.toggleAddLesson();
                     detail.getDetails(id);
                 } else {
                     NotificationManager.error(response.data.detail, 'New sub section', 5000)
@@ -165,8 +280,10 @@ const ContentNav = () => {
     }
 
     useEffect(() => {
-        detail.getDetails(id);
-        basic.getCourse(id);
+        return (() => {
+            detail.getDetails(id);
+            basic.getCourse(id);
+        })
     }, [id]);
 
 
@@ -182,7 +299,7 @@ const ContentNav = () => {
                         <button className='menu-link' style={{ color: '#00798C' }}>
                             Edit
                         </button>
-                        <button className='menu-link' style={{ color: '#FF4040' }}>
+                        <button className='menu-link' style={{ color: '#FF4040' }} onClick={deleteSelected}>
                             Delete
                         </button>
                     </div>
@@ -249,8 +366,6 @@ const ContentNav = () => {
                     </div>
                 </form>
             </div>
-
-            {console.log(newHook.newSub)}
 
             <div className={newHook.newSub ? `${style.modal} modal d-block` : `modal d-none`} id="exampleModalCenter" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <form className="modal-dialog modal-dialog-centered" role="document" onSubmit={saveNewSubSection}>

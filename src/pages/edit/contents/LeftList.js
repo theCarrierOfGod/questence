@@ -34,22 +34,25 @@ const LeftList = () => {
                                                     </span>
                                                 </li>
                                             </>
-                                        ) : null}
+                                        ) : (
+                                            <>
+                                                {detail.sectionCount === 0 ? (
+                                                    <li style={{ padding: '0' }}>
+                                                        <span className='activeTab w-100 d-flex alignCenter p-1 justify-content-center'>
+                                                            <span className='fa fa-exclamation text-danger' style={{ marginRight: '20px' }}></span>
+                                                            <span>
+                                                                There are no sections!
+                                                            </span>
+                                                        </span>
+                                                    </li>
+                                                ) : null}
+                                            </>
+                                        )}
                                     </>
                                 )}
                             </>
                         ) : (
                             <>
-                                {detail.sections.length === 0 ? (
-                                    <li style={{ padding: '0' }}>
-                                        <span className='activeTab w-100 d-flex alignCenter p-1 justify-content-center'>
-                                            <span className='fa fa-exclamation text-danger' style={{ marginRight: '20px' }}></span>
-                                            <span>
-                                                There are no sections!
-                                            </span>
-                                        </span>
-                                    </li>
-                                ) : null}
                                 {(detail.sections.map((eachSection) => (
                                     <li id={eachSection.id} key={eachSection.id} style={{ padding: '0' }}>
                                         <span className={`${((detail.viewing === eachSection.id) && (detail.activeSub === "") && (detail.activeLesson === "")) ? 'activeTab' : ''} w-100 d-flex alignCenter p-1`} onClick={e => detail.toggleView(eachSection.id, eachSection, eachSection.position_id)} >

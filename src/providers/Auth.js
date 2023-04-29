@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { NotificationManager } from 'react-notifications';
 
 const AuthContext = createContext(null);
 
@@ -33,6 +34,7 @@ export const Auth = ({ children }) => {
     }
 
     const logUserIn = () => {
+        NotificationManager.info('logging in', 'Login');
         var config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -49,11 +51,11 @@ export const Auth = ({ children }) => {
         axios(config)
             .then(function (response) {
                 storeActiveToken(response.data.user.username, response.data.token);
+                NotificationManager.success('success', 'Login');
                 navigate('/');
             })
             .catch(function (error) {
-                // console.log(error);
-                alert(error.data)
+                NotificationManager.error('failed', 'Login');
             });
     }
 
@@ -79,7 +81,7 @@ export const Auth = ({ children }) => {
         checkIfLoggedIn();
         sessionExpired();
         return () => {
-
+            window.scrollTo(0, 0)
         }
     }, [location.key])
 

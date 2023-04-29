@@ -36,7 +36,7 @@ export const New = ({ children }) => {
 
     // index page course list starts
     const getMyPrograms = () => {
-        setLoadingMessage('Fetching data...');
+        setLoadingMessage('Fetching your courses...');
         setPrograms([]);
         setProgramCount(0);
         var config = {
@@ -165,14 +165,6 @@ export const New = ({ children }) => {
             setNextLes('');
         }
     }
-
-    useEffect(() => {
-      setNow('');
-    
-      return () => {
-        console.log(true);
-      }
-    }, [location])
     
 
     return (

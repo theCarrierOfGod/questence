@@ -1,9 +1,9 @@
 import axios from "axios";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./Auth";
 import { useHook } from "./Hook";
-import { useParams } from "react-router-dom";
 import { useEdit } from "./Edit";
+import { useLocation } from "react-router-dom";
 
 const DetailContext = createContext(null);
 
@@ -11,7 +11,7 @@ export const Detail = ({ children }) => {
     const hook = useHook();
     const auth = useAuth();
     const edit = useEdit();
-    let { id } = useParams();
+    const location = useLocation();
     const [sectionCount, setSectionCount] = useState(0);
     const [sections, setSections] = useState([]);
     const [gettingContent, setGettingContent] = useState(true);
@@ -19,11 +19,29 @@ export const Detail = ({ children }) => {
     const [viewing, setViewing] = useState('');
     const [viewingID, setViewingID] = useState('');
     const [activeSub, setActiveSub] = useState('');
-    const [subID, setSubID] = useState(0);
+    const [subID, setSubID] = useState('');
     const [activeLesson, setActiveLesson] = useState('');
     const [data, setData] = useState([]);
     const [title, setTitle] = useState('');
     const [newForm, setNewForm] = useState(false);
+
+    // useEffect(() => {
+    //     setSectionCount(0)
+    //     setSections([])
+    //     setGettingContent(true)
+    //     setContentError(false)
+    //     setViewing('')
+    //     setViewingID('')
+    //     setActiveSub('')
+    //     setSubID('')
+    //     setActiveLesson('')
+    //     setData([])
+    //     setTitle('')
+    //     setNewForm(false)
+    //   return (data) => {
+        
+    //   }
+    // }, [location.key])
 
     const toggleView = (id, pass, vid) => {
         setViewing(id);
@@ -102,12 +120,13 @@ export const Detail = ({ children }) => {
                 if (response.detail) {
                     alert(response.detail);
                     setGettingContent(false);
-                    setContentError(false)
+                    setContentError(true)
                 } else {
                     setSectionCount(response.data[0].sections.length);
                     setSections(response.data[0].sections);
                     setGettingContent(false);
-                    setContentError(true)
+                    setContentError(false)
+                    console.log(response.data[0].sections.length)
                 }
             })
     }
@@ -126,7 +145,6 @@ export const Detail = ({ children }) => {
         let now = "0" + (sections[act].subsections[sub].lessons.length + 1);
         return subID + '.' + now;
     }
-
 
     return (
         <DetailContext.Provider value={{ activeSub, subID, viewingID, getLesPosition, getSubPosition, activeLesson, viewing, data, title, toggleView, toggleActiveSub, toggleActiveLesson, toggleNew, newSubSection, newLesson, getDetails, sectionCount, sections, contentError, gettingContent }}>
