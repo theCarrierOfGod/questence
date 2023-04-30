@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NotificationManager } from 'react-notifications';
+import { useHook } from "./Hook";
 
 const AuthContext = createContext(null);
 
@@ -9,9 +10,11 @@ export const Auth = ({ children }) => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const hook = useHook();
     const userName = window.localStorage.getItem('username');
     const token = window.localStorage.getItem('token');
     const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [componentOptions, setComponentOptions] = useState([]);
     const checkIfLoggedIn = () => {
         if (window.localStorage.getItem('username')) {
             setIsLoggedIn(true);
@@ -77,16 +80,33 @@ export const Auth = ({ children }) => {
         }
     }
 
+    const getChoices = () => {
+        var config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${hook.api}/i/choices/`,
+            headers: {
+                'Authorization': token
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                setComponentOptions(response.data['component types choices']);
+            })
+    }
+
     useEffect(() => {
         checkIfLoggedIn();
         sessionExpired();
+        getChoices()
         return () => {
-            window.scrollTo(0, 0)
+            window.scrollTo(0, 0);
         }
     }, [location.key])
 
     return (
-        <AuthContext.Provider value={{ userName, token, isLoggedIn, logUserIn, logOut }}>
+        <AuthContext.Provider value={{ userName, token, componentOptions, getChoices, isLoggedIn, logUserIn, logOut }}>
             {children}
         </AuthContext.Provider>
     )

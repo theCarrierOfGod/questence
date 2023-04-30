@@ -1,10 +1,13 @@
 import React from 'react'
 import { useEdit } from '../../../providers/Edit'
 import { useBasic } from '../../../providers/Basic';
+import RightContent from './RightContent';
+import { useDetail } from '../../../providers/Detail';
 
 const RightNav = () => {
     const edit = useEdit();
     const basic = useBasic();
+    const detail = useDetail();
     return (
         <>
             <div className='d-flex justify-content-between' style={{ marginBottom: 0 }}>
@@ -18,7 +21,7 @@ const RightNav = () => {
                 </p>
             </div>
             <hr />
-            {/* <SectionForm data={data} title={title} /> */}
+            <RightContent data={detail.data} title={detail.title} />
         </>
     )
 }

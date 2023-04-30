@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDetail } from "./Detail";
 
 const EditContext = createContext(null);
 
 export const Edit = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const detail = useDetail();
     const [isEdit, setIsEdit] = useState(false);
     const [contentEdit, setContentEdit] = useState(false);
     const [activeEdit, setActiveEdit] = useState();
@@ -19,6 +21,7 @@ export const Edit = ({ children }) => {
             setIsEdit(false);
             setActiveEdit('');
             setReadOnly(true);
+            detail.editContentToogle();
         } else {
             setIsEdit(true);
             setActiveEdit(page);

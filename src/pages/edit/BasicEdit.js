@@ -32,6 +32,7 @@ const BasicEdit = () => {
 
     useEffect(() => {
         getCourse(id);
+        window.scrollTo(0 ,0)
         document.getElementById("basicForm").reset();
     }, [location.key])
 
@@ -151,7 +152,6 @@ const BasicEdit = () => {
                                     onChange={(event, editor) => {
                                         const data = editor.getData();
                                         basic.setCourseDescription(data)
-                                        console.log({ data });
                                     }}
                                 />
                             </div>

@@ -12,9 +12,9 @@
 **/
 
 import React from 'react'
-// import Nav from '../../components/nav/Nav';
+import Nav from '../../components/nav/Nav';
 import style from "./index.module.css";
-// import Footer from '../../components/footer/Footer';
+import Footer from '../../components/footer/Footer';
 import Progress from './components/progress/Progress';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { useNew } from '../../providers/New';
@@ -24,7 +24,7 @@ const Index = () => {
     const newHook = useNew();
     return (
         <>
-            {/* <Nav /> */}
+            <Nav />
 
             <div className={`${style.menu} container d-flex justify-content-between`}>
                 <h4 className={style.menuTitle}>
@@ -40,7 +40,7 @@ const Index = () => {
 
 
             <div className='bottomMargin'></div>
-            {/* <Footer /> */}
+            <Footer />
         </>
     )
 }

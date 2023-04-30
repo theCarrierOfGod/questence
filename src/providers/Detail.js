@@ -24,6 +24,13 @@ export const Detail = ({ children }) => {
     const [data, setData] = useState([]);
     const [title, setTitle] = useState('');
     const [newForm, setNewForm] = useState(false);
+    const [editContent, setEditContent] = useState(false);
+    const [readOnly, setReadOnly] = useState(true);
+    const [newLesson, setNewLesson] = useState(false);
+    const [editComp, setEditComp] = useState(false);
+    const [compReadOnly, setCompReadonly] = useState(true);
+    const [activeComp, setActiveComp] = useState('');
+    const [theComponents, setTheComponents] = useState([]);
 
     // useEffect(() => {
     //     setSectionCount(0)
@@ -39,7 +46,7 @@ export const Detail = ({ children }) => {
     //     setTitle('')
     //     setNewForm(false)
     //   return (data) => {
-        
+
     //   }
     // }, [location.key])
 
@@ -53,6 +60,7 @@ export const Detail = ({ children }) => {
         if (viewing === id) {
             setViewing('');
             setViewingID('');
+            setTitle('');
         }
     }
 
@@ -99,10 +107,6 @@ export const Detail = ({ children }) => {
 
     }
 
-    const newLesson = () => {
-
-    }
-
     const getDetails = (id) => {
         var config = {
             method: 'get',
@@ -120,14 +124,21 @@ export const Detail = ({ children }) => {
                 if (response.detail) {
                     alert(response.detail);
                     setGettingContent(false);
-                    setContentError(true)
+                    setContentError(true);
+                    setSections([]);
+                    setSectionCount(0)
                 } else {
                     setSectionCount(response.data[0].sections.length);
                     setSections(response.data[0].sections);
                     setGettingContent(false);
                     setContentError(false)
-                    console.log(response.data[0].sections.length)
                 }
+            })
+            .catch(err => {
+                setGettingContent(false);
+                setContentError(true);
+                setSections([]);
+                setSectionCount(0)
             })
     }
 
@@ -146,8 +157,59 @@ export const Detail = ({ children }) => {
         return subID + '.' + now;
     }
 
+    const editContentToogle = () => {
+        if (!editContent) {
+            setEditContent(true)
+            setReadOnly(false)
+        } else {
+            setEditContent(false)
+            setReadOnly(true)
+        }
+    }
+
+    const toggleNewLesson = () => {
+        if (newLesson) {
+            setNewLesson(false);
+        } else {
+            setNewLesson(true);
+        }
+    }
+
+    const toggleComponentEdit = (id) => {
+        if (editComp) {
+            if (activeComp === id) {
+                setActiveComp('');
+                setEditComp(false);
+                setCompReadonly(true);
+            } else {
+                setActiveComp(id);
+                setEditComp(true);
+                setCompReadonly(false);
+            }
+        } else {
+            setActiveComp(id);
+            setEditComp(true);
+            setCompReadonly(false);
+        }
+
+    }
+
+    useEffect(() => {
+        return () => {
+            setNewLesson(false)
+        }
+    }, [location.key, data])
+
+    useEffect(() => {
+        setData([])
+        return () => {
+            setNewLesson(false)
+        }
+    }, [location.key])
+
+
     return (
-        <DetailContext.Provider value={{ activeSub, subID, viewingID, getLesPosition, getSubPosition, activeLesson, viewing, data, title, toggleView, toggleActiveSub, toggleActiveLesson, toggleNew, newSubSection, newLesson, getDetails, sectionCount, sections, contentError, gettingContent }}>
+        <DetailContext.Provider value={{ activeComp, toggleComponentEdit, editContent, editComp, compReadOnly, setData, readOnly, toggleNewLesson, editContentToogle, activeSub, subID, viewingID, getLesPosition, getSubPosition, activeLesson, viewing, data, title, toggleView, toggleActiveSub, toggleActiveLesson, toggleNew, newSubSection, newLesson, getDetails, sectionCount, sections, contentError, gettingContent }}>
             {children}
         </DetailContext.Provider>
     )

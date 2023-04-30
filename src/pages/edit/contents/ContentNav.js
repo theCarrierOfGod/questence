@@ -12,6 +12,7 @@ import { useBasic } from '../../../providers/Basic';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 import LeftList from './LeftList';
+import RightContent from './RightContent';
 
 const ContentNav = () => {
     let { id } = useParams();
@@ -23,7 +24,6 @@ const ContentNav = () => {
     const basic = useBasic();
     const [sectionTitle, setSectionTitle] = useState('');
     const [newSubTitle, setNewSubTitle] = useState('');
-    const [title, setTitle] = useState('');
 
     const newSection = () => {
         if (edit.isEdit) {
@@ -135,8 +135,6 @@ const ContentNav = () => {
         }
     }
 
-
-
     const deleteSelected = () => {
         if (edit.isEdit) {
             if (detail.activeLesson !== '') {
@@ -228,7 +226,6 @@ const ContentNav = () => {
                 } else {
                     NotificationManager.error(response.data.detail, 'New sub section', 5000)
                 }
-                console.log(response);
             })
             .catch(function (error) {
                 NotificationManager.error(error.message, 'New sub Section', 6000)
@@ -279,6 +276,14 @@ const ContentNav = () => {
             });
     }
 
+    const editContentHere = () => {
+        if (edit.isEdit) {
+            detail.editContentToogle();
+        } else {
+            NotificationManager.warning('Page not yet editable', 'EDIT', 5000)
+        }
+    }
+
     useEffect(() => {
         return (() => {
             detail.getDetails(id);
@@ -296,7 +301,7 @@ const ContentNav = () => {
                         <button className='menu-link text-primary' onClick={newSection}>
                             New
                         </button>
-                        <button className='menu-link' style={{ color: '#00798C' }}>
+                        <button className='menu-link' style={{ color: '#00798C' }} onClick={editContentHere}>
                             Edit
                         </button>
                         <button className='menu-link' style={{ color: '#FF4040' }} onClick={deleteSelected}>

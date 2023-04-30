@@ -231,3 +231,8 @@ body {
 .ml-20 {
   margin-left: 20px !important;
 }
+
+.editButton {
+  background-color: transparent;
+  border: 1px solid #00798C;
+}

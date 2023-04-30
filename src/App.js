@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation, useParams } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Login from './auth/Login';
 import BasicEdit from './pages/edit/BasicEdit';
@@ -25,11 +25,10 @@ import { Detail } from './providers/Detail';
 
 function App() {
   const location = useLocation();
-  let { id } = useParams();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+  }, [location]);
   return (
     <>
       <Hook>
