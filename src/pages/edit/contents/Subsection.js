@@ -21,7 +21,7 @@ const Subsection = (props) => {
 
     const updatesubsection = (e) => {
         e.preventDefault();
-        NotificationManager.info('Updating <br/>' + id, 'Sub-section', 6000);
+        NotificationManager.info('Updating <br/>', 'Sub-section', 6000);
 
         var config = {
             method: 'patch',

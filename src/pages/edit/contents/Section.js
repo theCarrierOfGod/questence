@@ -16,12 +16,11 @@ const Section = (props) => {
     const [title, setTitle] = useState(props.data.title);
     const [positionID, setPositionID] = useState(props.data.position_id);
     const [overview, setOverview] = useState(props.data.overview);
-    const [sectionID, setSectionID] = props.data.id;
     const [done, setDone] = useState(false);
 
     const updateSection = (e) => {
         e.preventDefault();
-        NotificationManager.info('Updating <br/>' + id, 'Section', 6000);
+        NotificationManager.info('Updating <br/>', 'Section', 6000);
 
         var config = {
             method: 'patch',
@@ -32,7 +31,7 @@ const Section = (props) => {
             },
             data: {
                 "title": title,
-                "id": sectionID,
+                "id":  props.data.id,
                 "overview": overview,
                 "position_id": positionID
             }

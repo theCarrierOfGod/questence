@@ -32,23 +32,23 @@ export const Detail = ({ children }) => {
     const [activeComp, setActiveComp] = useState('');
     const [theComponents, setTheComponents] = useState([]);
 
-    // useEffect(() => {
-    //     setSectionCount(0)
-    //     setSections([])
-    //     setGettingContent(true)
-    //     setContentError(false)
-    //     setViewing('')
-    //     setViewingID('')
-    //     setActiveSub('')
-    //     setSubID('')
-    //     setActiveLesson('')
-    //     setData([])
-    //     setTitle('')
-    //     setNewForm(false)
-    //   return (data) => {
+    useEffect(() => {
+        setSectionCount(0)
+        setSections([])
+        setGettingContent(true)
+        setContentError(false)
+        setViewing('')
+        setViewingID('')
+        setActiveSub('')
+        setSubID('')
+        setActiveLesson('')
+        setData([])
+        setTitle('')
+        setNewForm(false)
+      return (data) => {
 
-    //   }
-    // }, [location.key])
+      }
+    }, [location])
 
     const toggleView = (id, pass, vid) => {
         setViewing(id);
@@ -205,7 +205,7 @@ export const Detail = ({ children }) => {
         return () => {
             setNewLesson(false)
         }
-    }, [location.key])
+    }, [location])
 
 
     return (

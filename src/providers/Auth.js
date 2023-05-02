@@ -15,6 +15,7 @@ export const Auth = ({ children }) => {
     const token = window.localStorage.getItem('token');
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [componentOptions, setComponentOptions] = useState([]);
+    const [htmlOptions, setHtmlOptions] = useState([]);
     const checkIfLoggedIn = () => {
         if (window.localStorage.getItem('username')) {
             setIsLoggedIn(true);
@@ -84,7 +85,7 @@ export const Auth = ({ children }) => {
         var config = {
             method: 'get',
             maxBodyLength: Infinity,
-            url: `${hook.api}/i/choices/`,
+            url: `${hook.api}/i/choices2/`,
             headers: {
                 'Authorization': token
             }
@@ -92,7 +93,8 @@ export const Auth = ({ children }) => {
 
         axios(config)
             .then(function (response) {
-                setComponentOptions(response.data['component types choices']);
+                setComponentOptions(response.data.component_types_choices);
+                setHtmlOptions(response.data.html_choices);
             })
     }
 
@@ -106,7 +108,7 @@ export const Auth = ({ children }) => {
     }, [location.key])
 
     return (
-        <AuthContext.Provider value={{ userName, token, componentOptions, getChoices, isLoggedIn, logUserIn, logOut }}>
+        <AuthContext.Provider value={{ userName, token, componentOptions, htmlOptions, getChoices, isLoggedIn, logUserIn, logOut }}>
             {children}
         </AuthContext.Provider>
     )

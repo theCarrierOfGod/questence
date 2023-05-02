@@ -187,13 +187,13 @@ const Lesson = (props) => {
                             Components
                         </label>
                         <div>
-                            <button type="button" className={!detail.newLesson ? 'btn bgPreview' : 'd-none'} onClick={newComponent} style={{ marginLeft: '10px'}}>
+                            <button type="button" className={!detail.newLesson ? 'btn bgPreview' : 'd-none'} onClick={newComponent} style={{ marginLeft: '10px' }}>
                                 New
                             </button>
-                            <button type="button" className={detail.newLesson ? 'btn btn-danger' : 'd-none'} onClick={newComponent} style={{ marginLeft: '10px'}}>
+                            <button type="button" className={detail.newLesson ? 'btn btn-danger' : 'd-none'} onClick={newComponent} style={{ marginLeft: '10px' }}>
                                 Cancel
                             </button>
-                            <button type="button" className={detail.newLesson ? 'btn btn-success' : 'd-none'} onClick={saveComponent} style={{ marginLeft: '10px'}}>
+                            <button type="button" className={detail.newLesson ? 'btn btn-success' : 'd-none'} onClick={saveComponent} style={{ marginLeft: '10px' }}>
                                 Save
                             </button>
                         </div>
@@ -229,24 +229,11 @@ const Lesson = (props) => {
                                     <option value={null}>
                                         Select a type
                                     </option>
-                                    <option value={'VI'}>
-                                        Video
-                                    </option>
-                                    <option value={'AU'}>
-                                        Audio
-                                    </option>
-                                    <option value={'IM'}>
-                                        Image
-                                    </option>
-                                    <option value={'HT'}>
-                                        HTML
-                                    </option>
-                                    <option value={'EX'}>
-                                        Exercise
-                                    </option>
-                                    <option value={'PR'}>
-                                        Private
-                                    </option>
+                                    {auth.componentOptions.map((option) => (
+                                        <option key={option[0]} value={option[0]}>
+                                            {option[1]}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -273,11 +260,16 @@ const Lesson = (props) => {
 
                         <hr />
                     </div>
-                    {(props.data.components.length !== 0) ? (
-                        <> 
-                            <Component data={props.data.components} />
+                    {props.data.components ? (
+                        <>
+                            {(props.data.components.length !== 0) ? (
+                                <>
+                                    <Component data={props.data.components} />
+                                </>
+                            ) : null}
                         </>
-                    ) : null}
+                    ) : (null)}
+
                 </div>
             </div>
         </>
