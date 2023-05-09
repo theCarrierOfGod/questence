@@ -32,6 +32,8 @@ export const Detail = ({ children }) => {
     const [activeComp, setActiveComp] = useState('');
     const [theComponents, setTheComponents] = useState([]);
 
+    const [fetchingLesson, setFetchingLesson] = useState(false);
+
     useEffect(() => {
         setSectionCount(0)
         setSections([])
@@ -142,19 +144,15 @@ export const Detail = ({ children }) => {
             })
     }
 
-    const getSubPosition = () => {
-        let act = viewingID - 1;
-        let now = "0" + (sections[act].subsections.length + 1);
+    const getSubPosition = (secIn, secId) => {
+        let now = "0" + (sections[secIn].subsections.length + 1);
 
-        return viewingID + '.' + now;
+        return secId + '.' + now;
     }
 
-    const getLesPosition = () => {
-        let act = viewingID - 1;
-        let sub = subID.split(".")[1] - 1;
-
-        let now = "0" + (sections[act].subsections[sub].lessons.length + 1);
-        return subID + '.' + now;
+    const getLesPosition = (subArray, index, position_id) => {
+        let now = "0" + (subArray[index].lessons.length + 1);
+        return position_id + '.' + now;
     }
 
     const editContentToogle = () => {
@@ -194,22 +192,46 @@ export const Detail = ({ children }) => {
 
     }
 
+    const lessonChanges = (id) => {
+        var config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${hook.api}/i/course-lesson/${id}/drill-down/`,
+            headers: {
+                'Authorization': auth.token,
+                'Content-Type': 'application/json'
+            }
+        };
+        setGettingContent(true);
+        setFetchingLesson(true);
+
+        axios(config)
+            .then(function (response) {
+                setData(response.data)
+                setFetchingLesson(false);
+            })
+            .catch(err => {
+                setGettingContent(false);
+                setContentError(true);
+                setSections([]);
+                setSectionCount(0)
+                setFetchingLesson(false);
+            })
+    }
+
+    const getArray = (index) => {
+        return sections[index].subsections;
+    }
+
     useEffect(() => {
         return () => {
             setNewLesson(false)
         }
     }, [location.key, data])
 
-    useEffect(() => {
-        setData([])
-        return () => {
-            setNewLesson(false)
-        }
-    }, [location])
-
 
     return (
-        <DetailContext.Provider value={{ activeComp, toggleComponentEdit, editContent, editComp, compReadOnly, setData, readOnly, toggleNewLesson, editContentToogle, activeSub, subID, viewingID, getLesPosition, getSubPosition, activeLesson, viewing, data, title, toggleView, toggleActiveSub, toggleActiveLesson, toggleNew, newSubSection, newLesson, getDetails, sectionCount, sections, contentError, gettingContent }}>
+        <DetailContext.Provider value={{ getArray, fetchingLesson, setEditContent, setReadOnly, lessonChanges, activeComp, toggleComponentEdit, editContent, editComp, compReadOnly, setData, readOnly, toggleNewLesson, editContentToogle, activeSub, subID, viewingID, getLesPosition, getSubPosition, activeLesson, viewing, data, title, toggleView, toggleActiveSub, toggleActiveLesson, toggleNew, newSubSection, newLesson, getDetails, sectionCount, sections, contentError, gettingContent }}>
             {children}
         </DetailContext.Provider>
     )

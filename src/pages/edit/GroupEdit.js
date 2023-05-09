@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Footer from '../../components/footer/Footer'
 import Nav from '../../components/nav/Nav'
 import StatusTab from './StatusTab'
@@ -7,6 +7,11 @@ import TabMenu from './TabMenu'
 const GroupEdit = () => {
     const [group, setGroup] = useState([]);
     const [member, setMember] = useState([])
+
+    useEffect(() => {
+        setMember([]);
+        setGroup([])
+    }, [])
     return (
         <>
             {/* navigation bar */}

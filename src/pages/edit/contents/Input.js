@@ -17,10 +17,43 @@ export const Input = (props) => {
     const [type, setType] = useState(props.data.type);
     const [pid, setPID] = useState(props.data.position_id);
     const [title, setTitle] = useState(props.data.title);
+    const [isLoading, setIsLoading] = useState(false);
+    const [deleting, setDeleting] = useState(false)
+
+    // html data
     const [html_type, setHtmlType] = useState(props.data.html_type);
     const [html_url, setHtmlUrl] = useState(props.data.html_url);
     const [html_content, setHtmlContent] = useState(props.data.html_content);
-    const [htmldata, setHtmlData] = useState({
+
+    //video data
+    const [video_type, setvideoType] = useState(props.data.video_type);
+    const [video_header, setVideoHeader] = useState(props.data.video_header);
+    const [video_footer, setVideoFooter] = useState(props.data.video_footer);
+    const [recorded_url, setMobileUrl] = useState(props.data.recorded_url);
+    const [mobile_url, setRecorderUrl] = useState(props.data.recorded_url);
+    const [live_url, setLiveUrl] = useState(props.data.recorded_url);
+    const [due_date_time, setDueDate] = useState(props.data.due_date_time)
+    const [starting_date_time, setStartingDate] = useState(props.data.starting_date_time);
+
+    //image data
+    const [image_header, setImageHeader] = useState(props.data.image_header);
+    const [image_footer, setImageFooter] = useState(props.data.vidimage_footereo_footer);
+    const [image_url, setImageUrl] = useState(props.data.image_url);
+
+    // exercise data
+    const [exercise_type, setExerciseType] = useState(props.data.exercise_type);
+    const [grading_weight, setGradingWeight] = useState(props.data.grading_weight);
+    const [total_score, settotalScore] = useState(props.data.total_score);
+    const [available_date_time, setAvailableDateTime] = useState(props.data.available_date_time);
+    const [start_date_time, setStartDate] = useState(props.data.start_date_time);
+    const [duration, setDuration] = useState(props.data.duration);
+    const [show_allocated_score, setShowAllocatedScore] = useState(props.data.show_allocated_score);
+    const [show_hint, setShowHint] = useState(props.data.show_hint);
+    const [show_answer, setShowAnswer] = useState(props.data.show_answer);
+    const [exercise_overview, setExerciseOverview] = useState(props.data.exercise_overview);
+
+
+    const [patchData, setPatchData] = useState({
         lesson_id: props.data.lesson_id,
         id: props.data.id,
         type: type,
@@ -29,6 +62,26 @@ export const Input = (props) => {
         html_type: html_type,
         html_url: html_url,
         html_content: html_content,
+        video_type: video_type,
+        video_footer: video_footer,
+        video_header: video_header,
+        recorded_url: recorded_url,
+        mobile_url: mobile_url,
+        live_url: live_url,
+        starting_date_time: starting_date_time,
+        due_date_time: due_date_time,
+        image_footer: image_footer,
+        image_header: image_header,
+        image_url: image_url,
+        exercise_type: exercise_type,
+        grading_weight: grading_weight,
+        total_score: total_score,
+        available_date_time: available_date_time,
+        start_date_time: start_date_time,
+        duration: duration,
+        show_hint: show_hint,
+        show_answer: show_answer,
+        show_allocated_score: show_allocated_score,
     });
 
     const editComponent = (id) => {
@@ -37,34 +90,42 @@ export const Input = (props) => {
 
     const deleteComponent = (id) => {
         if (detail.editComp) {
-
-            NotificationManager.info('Deleting', 'Component', 6000);
-            var config = {
-                method: 'delete',
-                maxBodyLength: Infinity,
-                url: `${hook.api}/i/course-component/`,
-                headers: {
-                    'Authorization': auth.token
-                },
-                data: {
-                    id: props.data.id
-                }
-            };
-
-            axios(config)
-                .then(function (response) {
-                    if (response.data.message) {
-                        NotificationManager.success('Deleted', 'Component', 6000, '', window.location.reload());
-                    } else {
-                        NotificationManager.error(response.data.detail, 'Component', 5000)
+            if (window.confirm("Are you sure you want to delete this component?") === true) {
+                NotificationManager.info('Deleting', 'Component', 6000);
+                setDeleting(true)
+                var config = {
+                    method: 'delete',
+                    maxBodyLength: Infinity,
+                    url: `${hook.api}/i/course-component/`,
+                    headers: {
+                        'Authorization': auth.token
+                    },
+                    data: {
+                        id: props.data.id
                     }
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    NotificationManager.error(error.message, 'Component', 6000)
-                });
+                };
+
+                axios(config)
+                    .then(function (response) {
+                        if (response.data.message) {
+                            NotificationManager.success('Deleted', 'Component', 6000);
+                            setDeleting(false)
+                            detail.lessonChanges(props.data.lesson_id);
+                        } else {
+                            NotificationManager.error(response.data.detail, 'Component', 5000)
+                            setDeleting(false)
+                        }
+                    })
+                    .catch(function (error) {
+                        NotificationManager.error(error.message, 'Component', 6000)
+                        setDeleting(false)
+                    });
+            } else {
+                NotificationManager.info('Cancelled', 'Component', 6000)
+            }
+
         } else {
-            NotificationManager.warning('Page cannot be edited', 'Delete');
+            NotificationManager.warning('Component cannot be deleted', 'Delete');
         }
     }
 
@@ -76,50 +137,50 @@ export const Input = (props) => {
     }
 
     const updateData = (e) => {
-        setHtmlData({
-            ...htmldata,
+        setPatchData({
+            ...patchData,
             [e.target.name]: e.target.value
         })
     }
 
-    const updateHtmlCon = (name, value) => {
-        setHtmlData({
-            ...htmldata,
+    const updateEditorCon = (name, value) => {
+        setPatchData({
+            ...patchData,
             [name]: value
         })
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        NotificationManager.info('Updating', 'Component', 6000);
+        setIsLoading(true)
+        var config = {
+            method: 'patch',
+            maxBodyLength: Infinity,
+            url: `${hook.api}/i/course-component/`,
+            headers: {
+                'Authorization': auth.token
+            },
+            data: patchData
+        };
 
-        if (type === "HT") {
-            NotificationManager.info('Updating', 'Component', 6000);
-
-            var config = {
-                method: 'patch',
-                maxBodyLength: Infinity,
-                url: `${hook.api}/i/course-component/`,
-                headers: {
-                    'Authorization': auth.token
-                },
-                data: htmldata
-            };
-
-            axios(config)
-                .then(function (response) {
-                    if (response.data.id) {
-                        NotificationManager.success('Updated', 'Component', 6000);
-                        detail.getDetails(id);
-                        detail.toggleComponentEdit(id);
-                    } else {
-                        NotificationManager.error(response.data.detail, 'Component', 5000)
-                    }
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    NotificationManager.error(error.message, 'Component', 6000)
-                });
-        }
+        axios(config)
+            .then(function (response) {
+                if (response.data.id) {
+                    NotificationManager.success('Updated', 'Component', 6000);
+                    detail.getDetails(id);
+                    detail.toggleComponentEdit(id);
+                    detail.lessonChanges(props.data.lesson_id);
+                    setIsLoading(false)
+                } else {
+                    NotificationManager.error(response.data.detail, 'Component', 5000)
+                    setIsLoading(false)
+                }
+            })
+            .catch(function (error) {
+                NotificationManager.error(error.message, 'Component', 6000)
+                setIsLoading(false)
+            });
     }
     return (
         <>
@@ -127,7 +188,13 @@ export const Input = (props) => {
             <form id={props.id} onSubmit={(e) => handleSubmit(e)}>
                 <div className={detail.editContent ? 'd-flex justify-content-end' : 'd-none'}>
                     <button className={(detail.activeComp === props.data.id) ? 'btn bgPreview' : 'd-none'} type={'submit'}>
-                        Save
+                        {isLoading ? (
+                            <>
+                                <span className='fa fa-spinner fa-spin'></span>
+                            </>
+                        ) : (
+                            'Save'
+                        )}
                     </button>
                     <button className={(detail.activeComp !== props.data.id) ? 'btn btn-primary' : 'd-none'} type={'button'} onClick={() => editComponent(props.data.id)} style={{ marginLeft: '10px' }}>
                         Edit
@@ -135,12 +202,18 @@ export const Input = (props) => {
                     <button className={(detail.activeComp === props.data.id) ? 'btn btn-warning' : 'd-none'} type={'button'} onClick={() => editComponent(props.data.id)} style={{ marginLeft: '10px' }}>
                         Cancel
                     </button>
-                    <button className='btn btn-danger' type={'button'} onClick={() => deleteComponent(props.data.id)} style={{ marginLeft: '10px' }}>
-                        Delete
+                    <button className={(detail.activeComp === props.data.id) ? 'btn btn-danger' : 'd-none'} type={'button'} onClick={() => deleteComponent(props.data.id)} style={{ marginLeft: '10px' }}>
+                        {deleting ? (
+                            <>
+                                <span className='fa fa-spinner fa-spin'></span>
+                            </>
+                        ) : (
+                            'Delete'
+                        )}
                     </button>
                 </div>
                 <div className='row'>
-                    <div className='col-lg-3'>
+                    <div className='col-lg-3 col-4'>
                         <div className="form-group mb-3">
                             <label className="label" htmlFor="position_id">
                                 Position ID
@@ -157,7 +230,7 @@ export const Input = (props) => {
                             />
                         </div>
                     </div>
-                    <div className='col-lg-3'>
+                    <div className='col-lg-3 col-3'>
                         <div className="form-group mb-3">
                             <label className="label" htmlFor="type">
                                 Type
@@ -170,14 +243,14 @@ export const Input = (props) => {
                                 onChange={e => { updateData(e); setType(e.target.value) }}
                             >
                                 {auth.componentOptions.map((option) => (
-                                    <option key={option[0]} value={option[0]} selected={(type === option[0]) ? true : false}>
-                                        {option[1]}
+                                    <option key={option['V']} value={option['V']} selected={(type === option['V']) ? true : false}>
+                                        {option['D']}
                                     </option>
                                 ))}
                             </select>
                         </div>
                     </div>
-                    <div className='col-lg-6 d-flex'>
+                    <div className='col-lg-6 col-5 d-flex'>
                         <div className="form-group mb-3 w-100">
                             <label className="label" htmlFor="title">
                                 Title
@@ -200,7 +273,7 @@ export const Input = (props) => {
                 </div>
                 <hr />
                 <div className={seeLess ? 'd-block' : 'd-none'}>
-                    {/* Video component */}
+                    {/* Video component done */}
                     {(type === "VI") ? (
                         <>
                             <div className='row'>
@@ -209,75 +282,108 @@ export const Input = (props) => {
                                         <label className="label" htmlFor="videoType">
                                             Video Type
                                         </label>
-                                        <select disabled={(detail.activeComp === props.data.id) ? false : true} className='form-control' id="videoType" name="videoType">
-                                            <option value={props.data.video_type}>{props.data.video_type}</option>
+                                        <select
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setvideoType(e.target.value) }}
+                                            className='form-control'
+                                            id="video_type"
+                                            name="video_type">
+                                            <option value={''}>Select Type</option>
+                                            {auth.videosOptions.map((option) => (
+                                                <option key={option['V']} value={option['V']} selected={(video_type === option['V']) ? true : false}>
+                                                    {option['D']}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
                                 <div className='col-lg-12'>
                                     <div className="form-group mb-3 w-100">
-                                        <label className="label" htmlFor="videoHeader">
+                                        <label className="label" htmlFor="video_header">
                                             Video Header
                                         </label>
                                         <CKEditor
                                             editor={ClassicEditor}
                                             className="form-control"
-                                            name="videoHeader"
-                                            id="videoHeader"
+                                            name="video_header"
+                                            id="video_header"
                                             rows="5"
                                             required={true}
                                             disabled={(detail.activeComp === props.data.id) ? false : true}
                                             data={props.data.video_header}
                                             onChange={(event, editor) => {
                                                 const data = editor.getData();
-                                                console.log({ data });
+                                                setVideoHeader(data);
+                                                updateEditorCon('video_header', data);
                                             }}
                                         />
                                     </div>
                                 </div>
                                 <div className='col-lg-12'>
                                     <div className="form-group mb-3 w-100">
-                                        <label className="label" htmlFor="videoFooter">
+                                        <label className="label" htmlFor="video_footer">
                                             Video Footer
                                         </label>
                                         <CKEditor
                                             editor={ClassicEditor}
                                             className="form-control"
-                                            name="videoFooter"
-                                            id="videoFooter"
+                                            name="video_footer"
+                                            id="video_footer"
                                             rows="5"
                                             required={true}
                                             disabled={(detail.activeComp === props.data.id) ? false : true}
                                             data={props.data.video_footer}
                                             onChange={(event, editor) => {
                                                 const data = editor.getData();
-                                                console.log({ data });
+                                                setVideoFooter(data);
+                                                updateEditorCon('video_footer', data);
                                             }}
                                         />
                                     </div>
                                 </div>
                                 <div className='col-lg-12'>
                                     <div className="form-group mb-3">
-                                        <label className="label" htmlFor="recordedlUrl">
+                                        <label className="label" htmlFor="recorded_url">
                                             Recorded URL
                                         </label>
-                                        <input disabled={(detail.activeComp === props.data.id) ? false : true} className='form-control' name="recordedlUrl" id="recordedlUrl" value={props.data.recorded_url} placeholder='https://www.pinterest.com/search/pins/?q=contact%20us%20page&rs=typed&term_meta[]=contact%7Ctyped&term_meta[]=us%7' />
+                                        <input
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setRecorderUrl(e.target.value) }}
+                                            className='form-control'
+                                            name="recorded_url"
+                                            id="recorded_url"
+                                            value={props.data.recorded_url}
+                                            placeholder='https://www.pinterest.com/search/pins/?q=contact%20us%20page&rs=typed&term_meta[]=contact%7Ctyped&term_meta[]=us%7' />
                                     </div>
                                 </div>
                                 <div className='col-lg-12'>
                                     <div className="form-group mb-3">
-                                        <label className="label" htmlFor="mobileUrl">
+                                        <label className="label" htmlFor="mobile_url">
                                             Mobile URL
                                         </label>
-                                        <input disabled={(detail.activeComp === props.data.id) ? false : true} className='form-control' name="mobileUrl" id="mobileUrl" value={props.data.mobile_url} placeholder='https://www.pinterest.com/search/pins/?q=contact%20us%20page&rs=typed&term_meta[]=contact%7Ctyped&term_meta[]=us%7' />
+                                        <input
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setMobileUrl(e.target.value) }}
+                                            className='form-control'
+                                            name="mobile_url"
+                                            id="mobile_url"
+                                            value={props.data.mobile_url}
+                                            placeholder='https://www.pinterest.com/search/pins/?q=contact%20us%20page&rs=typed&term_meta[]=contact%7Ctyped&term_meta[]=us%7' />
                                     </div>
                                 </div>
                                 <div className='col-lg-12'>
                                     <div className="form-group mb-3">
-                                        <label className="label" htmlFor="livelUrl">
+                                        <label className="label" htmlFor="livel_url">
                                             Live URL
                                         </label>
-                                        <input disabled={(detail.activeComp === props.data.id) ? false : true} className='form-control' name="livelUrl" id="livelUrl" value={props.data.live_url} placeholder='https://www.pinterest.com/search/pins/?q=contact%20us%20page&rs=typed&term_meta[]=contact%7Ctyped&term_meta[]=us%7' />
+                                        <input
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setLiveUrl(e.target.value) }}
+                                            className='form-control'
+                                            name="livel_url"
+                                            id="livel_url"
+                                            value={props.data.live_url}
+                                            placeholder='https://www.pinterest.com/search/pins/?q=contact%20us%20page&rs=typed&term_meta[]=contact%7Ctyped&term_meta[]=us%7' />
                                     </div>
                                 </div>
                                 <div className='col-lg-12'>
@@ -285,15 +391,20 @@ export const Input = (props) => {
                                         <div className='col-md-6'>
                                             <div className="form-group mb-3">
                                                 <div className='row'>
-                                                    <label className="label mb-3 col-md-12" htmlFor="startDate">
+                                                    <label className="label mb-3 col-md-12" htmlFor="starting_date_time">
                                                         Start Date & Time
                                                     </label>
-                                                    <div className='col-sm-6'>
-                                                        <input disabled={(detail.activeComp === props.data.id) ? false : true} type='date' className='form-control mb-3 ' name="startDate" id="startDate" />
+                                                    <div className='col-sm-12'>
+                                                        <input
+                                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                                            type='datetime-local'
+                                                            className='form-control mb-3 '
+                                                            name="starting_date_time"
+                                                            id="starting_date_time"
+                                                            value={starting_date_time}
+                                                            onChange={(e) => { updateData(e); setStartingDate(e.target.value) }}
+                                                        />
                                                     </div>
-                                                    <div className='col-sm-6'>
-                                                        <input disabled={(detail.activeComp === props.data.id) ? false : true} type="time" className='form-control mb-3 col-sm-6' name="startTime" id="startTime" value={props.data.start_date_time} />
-                                                    </div> 
                                                 </div>
                                             </div>
                                         </div>
@@ -303,11 +414,16 @@ export const Input = (props) => {
                                                     <label className="label mb-3 col-md-12" htmlFor="endDate">
                                                         End Date & Time
                                                     </label>
-                                                    <div className='col-sm-6'>
-                                                        <input disabled={(detail.activeComp === props.data.id) ? false : true} type='date' className='form-control mb-3' name="endDate" id="endDate" value={props.data.due_date_time} />
-                                                    </div>
-                                                    <div className='col-sm-6'>
-                                                        <input disabled={(detail.activeComp === props.data.id) ? false : true} type="time" className='form-control mb-3' name="endTime" id="endTime" />
+                                                    <div className='col-sm-12'>
+                                                        <input
+                                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                                            type='datetime-local'
+                                                            className='form-control mb-3 '
+                                                            name="due_date_time"
+                                                            id="due_date_time"
+                                                            value={due_date_time}
+                                                            onChange={(e) => { updateData(e); setDueDate(e.target.value) }}
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -318,7 +434,7 @@ export const Input = (props) => {
                         </>
                     ) : null}
 
-                    {/* HTML component */}
+                    {/* HTML component done */}
                     {(type === "HT") ? (
                         <>
                             <div className='col-lg-12'>
@@ -336,8 +452,8 @@ export const Input = (props) => {
                                     >
                                         <option value={''}>Select Type</option>
                                         {auth.htmlOptions.map((option) => (
-                                            <option key={option[0]} value={option[0]} selected={(html_type === option[0]) ? true : false}>
-                                                {option[1]}
+                                            <option key={option['V']} value={option['V']} selected={(html_type === option['V']) ? true : false}>
+                                                {option['D']}
                                             </option>
                                         ))}
                                     </select>
@@ -361,7 +477,7 @@ export const Input = (props) => {
                                         onChange={(e, editor) => {
                                             const data = editor.getData();
                                             setHtmlContent(data);
-                                            updateHtmlCon('html_content', data);
+                                            updateEditorCon('html_content', data);
                                         }}
                                     />
                                 </div>
@@ -382,13 +498,190 @@ export const Input = (props) => {
                                     />
                                 </div>
                             </div>
+                            <hr />
+                            <br></br>
                         </>
                     ) : null}
 
                     {/* EXERCISE component */}
                     {(type === "EX") ? (
                         <>
-                            EXERCISE component
+                            <div className='row'>
+                                <div className='col-lg-12'>
+                                    <div className="form-group mb-3">
+                                        <label className="label" htmlFor="exercise_type">
+                                            Excercise Type
+                                        </label>
+                                        <select className='form-control' id="exercise_type" name="exercise_type"
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}>
+                                            <option value={''}>Select Type</option>
+                                            {auth.exerciseOptions.map((option) => (
+                                                <option key={option['V']} value={option['V']} selected={(exercise_type === option['V']) ? true : false}>
+                                                    {option['D']}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                                {/* grading weight  */}
+                                <div className='col-sm-6'>
+                                    <div className="form-group mb-3">
+                                        <label className="label" htmlFor="grading_weight">
+                                            Grading Weight
+                                        </label>
+                                        <input
+                                            className='form-control'
+                                            name={'grading_weight'}
+                                            value={grading_weight}
+                                            id={grading_weight}
+                                            placeholder='0'
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setGradingWeight(e.target.value) }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='col-sm-6'>
+                                    <div className="form-group mb-3">
+                                        <label className="label" htmlFor="total_score">
+                                            Total Score
+                                        </label>
+                                        <input
+                                            className='form-control'
+                                            name={'total_score'}
+                                            value={total_score}
+                                            placeholder='0'
+                                            onChange={(e) => { updateData(e); settotalScore(e.target.value) }}
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='col-sm-6'>
+                                    <div className="form-group mb-3">
+                                        <div className='row'>
+                                            <label className="label mb-3 col-md-12" htmlFor="available_date_time">
+                                                Available Date & Time
+                                            </label>
+                                            <div className='col-sm-12'>
+                                                <input
+                                                    type='datetime-local'
+                                                    className='form-control mb-3 '
+                                                    name={'available_date_time'}
+                                                    disabled={(detail.activeComp === props.data.id) ? false : true}
+                                                    id="available_date_time"
+                                                    onChange={(e) => { updateData(e); setAvailableDateTime(e.target.value) }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='col-sm-6'>
+                                    <div className="form-group mb-3">
+                                        <div className='row'>
+                                            <label className="label mb-3 col-md-12" htmlFor="start_date_time">
+                                                Start Date & Time
+                                            </label>
+                                            <div className='col-sm-12'>
+                                                <input
+                                                    type='datetime-local'
+                                                    className='form-control mb-3 '
+                                                    name={'start_date_time'}
+                                                    disabled={(detail.activeComp === props.data.id) ? false : true}
+                                                    id="start_date_time"
+                                                    value={start_date_time}
+                                                    onChange={(e) => { updateData(e); setStartDate(e.target.value) }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='col-sm-6'>
+                                    <div className="form-group mb-3">
+                                        <label className="label mb-3 col-md-12" htmlFor="duration">
+                                            Duration
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className='form-control'
+                                            placeholder='input duration'
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            name={'duration'}
+                                            onChange={(e) => { updateData(e); setDuration(e.target.value) }}
+                                            id="duration"
+                                            value={duration}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='col-sm-6'>
+                                    <div className="form-group mb-3">
+                                        <div className='row'>
+                                            <label className="label mb-3 col-md-12" htmlFor="startDate">
+                                                Due Date & Time
+                                            </label>
+                                            <div className='col-sm-12'>
+                                                <input
+                                                    type='datetime-local'
+                                                    className='form-control mb-3 '
+                                                    disabled={(detail.activeComp === props.data.id) ? false : true}
+                                                    name="due_date_time"
+                                                    id="due_date_time"
+                                                    value={due_date_time}
+                                                    onChange={(e) => { updateData(e); setDueDate(e.target.value) }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='col-sm-4'>
+                                    <div className="form-group mb-3">
+                                        <label className="label mb-3 col-md-12" htmlFor="show_allocated_score">
+                                            Show allocated score
+                                        </label>
+                                        <select
+                                            name="show_allocated_score"
+                                            className='form-select'
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setShowAllocatedScore(e.target.value) }}
+                                        >
+                                            <option value={show_allocated_score}>Select option</option>
+                                            <option value={true} selected={(show_allocated_score === true) ? true : false}>True</option>
+                                            <option value={false} selected={(show_allocated_score !== true) ? true : false}>False</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className='col-sm-4'>
+                                    <div className="form-group mb-3">
+                                        <label className="label mb-3 col-md-12" htmlFor="show_hint">
+                                            Show hint
+                                        </label>
+                                        <select
+                                            name="show_hint"
+                                            className='form-select'
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setShowHint(e.target.value) }}>
+                                            <option value={show_hint}>Select option</option>
+                                            <option value={true} selected={(show_hint === true) ? true : false}>True</option>
+                                            <option value={false} selected={(show_hint !== true) ? true : false}>False</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className='col-sm-4'>
+                                    <div className="form-group mb-3">
+                                        <label className="label mb-3 col-md-12" htmlFor="show_answer">
+                                            Show answer
+                                        </label>
+                                        <select
+                                            name="show_answer"
+                                            className='form-select'
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setShowAnswer(e.target.value) }}>
+                                            <option value={show_answer}>Select option</option>
+                                            <option value={true} selected={(show_answer === true) ? true : false}>True</option>
+                                            <option value={false} selected={(show_answer !== true) ? true : false}>False</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </>
                     ) : null}
 
@@ -399,17 +692,77 @@ export const Input = (props) => {
                         </>
                     ) : null}
 
-                    {/* iMAGE component */}
+                    {/* iMAGE component done */}
                     {(type === "IM") ? (
                         <>
-                            IMAGE component
+                            <div className='row'>
+                                <div className='col-lg-12'>
+                                    <div className="form-group mb-3 w-100">
+                                        <label className="label" htmlFor="image_header">
+                                            Image Header
+                                        </label>
+                                        <CKEditor
+                                            editor={ClassicEditor}
+                                            className="form-control"
+                                            name="image_header"
+                                            id="image_header"
+                                            rows="5"
+                                            required={true}
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            data={props.data.image_header}
+                                            onChange={(event, editor) => {
+                                                const data = editor.getData();
+                                                setImageHeader(data);
+                                                updateEditorCon('image_header', data);
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='col-lg-12'>
+                                    <div className="form-group mb-3 w-100">
+                                        <label className="label" htmlFor="image_footer">
+                                            Image Footer
+                                        </label>
+                                        <CKEditor
+                                            editor={ClassicEditor}
+                                            className="form-control"
+                                            name="image_footer"
+                                            id="image_footer"
+                                            rows="5"
+                                            required={true}
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            data={props.data.image_footer}
+                                            onChange={(event, editor) => {
+                                                const data = editor.getData();
+                                                setImageFooter(data);
+                                                updateEditorCon('image_footer', data);
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='col-lg-12'>
+                                    <div className="form-group mb-3">
+                                        <label className="label" htmlFor="image_url">
+                                            Image URL
+                                        </label>
+                                        <input
+                                            disabled={(detail.activeComp === props.data.id) ? false : true}
+                                            onChange={(e) => { updateData(e); setImageUrl(e.target.value) }}
+                                            className='form-control'
+                                            name="image_url"
+                                            id="image_url"
+                                            value={props.data.image_url}
+                                            placeholder='https://www.pinterest.com/search/pins/?q=contact%20us%20page&rs=typed&term_meta[]=contact%7Ctyped&term_meta[]=us%7' />
+                                    </div>
+                                </div>
+                            </div>
                         </>
                     ) : null}
 
                     {/* aUDIO component */}
                     {(type === "AU") ? (
                         <>
-                            AUDIO component
+                            AUDIO component NULL
                         </>
                     ) : null}
                 </div>

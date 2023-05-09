@@ -44,23 +44,27 @@ const Progress = () => {
                                 </button>
                             </div>
                         </div>
-                        <div className='col-lg-3 d-flex justify-content-center p-2'>
-                            <div className={style.progressRing}>
-                                <div className='text-center w-100'>
-                                    <strong>
-                                        {newHook.programCount}
-                                    </strong> <br></br>
-                                    Live Courses
+                        <div className='col-lg-6'>
+                            <div className='row'>
+                                <div className='col-6 d-flex justify-content-center p-2'>
+                                    <div className={style.progressRing}>
+                                        <div className='text-center w-100'>
+                                            <strong>
+                                                {newHook.programCount}
+                                            </strong> <br></br>
+                                            Live Courses
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className='col-lg-3 d-flex justify-content-center p-2'>
-                            <div className={style.progressRing}>
-                                <div className='text-center w-100'>
-                                    <strong>
-                                        {newHook.programCount}
-                                    </strong> <br></br>
-                                    Enrollments
+                                <div className='col-6 d-flex justify-content-center p-2'>
+                                    <div className={style.progressRing}>
+                                        <div className='text-center w-100'>
+                                            <strong>
+                                                {newHook.programCount}
+                                            </strong> <br></br>
+                                            Enrollments
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

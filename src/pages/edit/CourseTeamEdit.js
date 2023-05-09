@@ -7,10 +7,10 @@ import TabMenu from './TabMenu'
 
 const CourseTeamEdit = () => {
     const edit = useEdit();
-    const [name, setName] = useState('');
+    // const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
-    const [team, setTeam] = useState([]);
+    // const [team, setTeam] = useState([]);
     const [newMember, setNewMember] = useState(false);
 
     const toggleNewMember = () => {
@@ -26,8 +26,11 @@ const CourseTeamEdit = () => {
     const addNewRole = (event) => {
         event.preventDefault();
 
-        const formData = new FormData(event.target)
-        console.log(formData)
+        // setTeam({
+        //     ...team,
+        //     [email]: email,
+        //     [role]: role
+        // })
     }
     return (
         <>
@@ -62,7 +65,14 @@ const CourseTeamEdit = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {(team.length === 0) ? (
+                                    <tr className='tableRow'>
+                                        <td></td>
+                                        <td className='text-center'>
+                                            No Data
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    {/* {(team.length === 0) ? (
                                         <>
                                             <tr className='tableRow'>
                                                 <td></td>
@@ -72,7 +82,7 @@ const CourseTeamEdit = () => {
                                                 <td></td>
                                             </tr>
                                         </>
-                                    ) : (
+                                    ) : (null
                                         <>
                                             {team.map((team) => (
                                                 <tr key={team.id} className='tableRow' id={team.id}>
@@ -88,7 +98,7 @@ const CourseTeamEdit = () => {
                                                 </tr>
                                             ))}
                                         </>
-                                    )}
+                                    )} */}
                                 </tbody>
                             </table>
                             <div onClick={toggleNewMember} className='text-center tableFooter bgPreview is-hoverable' disabled={edit.readOnly}>
@@ -107,7 +117,7 @@ const CourseTeamEdit = () => {
                             <div className='col-lg-4'>
                                 <div className="form-group mt-3">
                                     <label className="label" htmlFor="role">Select Role</label>
-                                    <select className="form-control" value={role} onChange={e => setRole(e.target.vale)} disabled={edit.readOnly} name="role" id="role" required="">
+                                    <select className="form-control" value={role} onChange={e => setRole(e.target.value)} disabled={edit.readOnly} name="role" id="role" required="">
                                         <option>Select</option>
                                         <option value={'author'}>Author</option>
                                         <option value={'instructor'}>Instructor</option>

@@ -20,7 +20,7 @@ const Section = (props) => {
 
     const updateSection = (e) => {
         e.preventDefault();
-        NotificationManager.info('Updating <br/>', 'Section', 6000);
+        NotificationManager.info('Updating', 'Section', 6000);
 
         var config = {
             method: 'patch',
@@ -45,7 +45,6 @@ const Section = (props) => {
                 } else {
                     NotificationManager.error(response.data.detail, 'Section', 5000)
                 }
-                console.log(response);
             })
             .catch(function (error) {
                 NotificationManager.error(error.message, 'Section', 6000)

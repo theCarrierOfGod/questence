@@ -16,9 +16,15 @@ const Lesson = (props) => {
     const [positionID, setPositionID] = useState(props.data.position_id);
     const [lessonID, setLessonID] = useState();
     const [done, setDone] = useState(false);
-    const [componentPosition, setComponentPosition] = useState(props.data.position_id + ".01")
+
+    const newPID = () => {
+        return props.data.position_id + ".0" + (props.data.subsections.length + 1)
+    }
+
+    const [componentPosition, setComponentPosition] = useState('')
     const [componentTitle, setComponentTitle] = useState('');
     const [type, setType] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const updateLesson = (e) => {
         e.preventDefault();
@@ -42,11 +48,11 @@ const Lesson = (props) => {
             .then(function (response) {
                 if (response.data.id) {
                     NotificationManager.success('Updated', 'Lesson', 6000);
-                    detail.getDetails(id);
+                    // detail.getDetails(id);
+                    detail.lessonChanges(lessonID);
                 } else {
                     NotificationManager.error(response.data.detail, 'Lesson', 5000)
                 }
-                console.log(response);
             })
             .catch(function (error) {
                 NotificationManager.error(error.message, 'Lesson', 6000)
@@ -63,6 +69,7 @@ const Lesson = (props) => {
 
     const saveComponent = () => {
         NotificationManager.info('Creating', 'Component', 6000);
+        setIsLoading(true);
 
         var config = {
             method: 'post',
@@ -83,15 +90,18 @@ const Lesson = (props) => {
             .then(function (response) {
                 if (response.data.id) {
                     detail.getDetails(id);
+                    detail.lessonChanges(lessonID);
                     NotificationManager.success('Created', 'Component', 6000);
                     detail.toggleNewLesson();
+                    setIsLoading(false);
                 } else {
                     NotificationManager.error(response.data.detail, 'Component', 5000)
+                    setIsLoading(false);
                 }
-                console.log(response);
             })
             .catch(function (error) {
                 NotificationManager.error(error.message, 'Component', 6000)
+                setIsLoading(false);
             });
     }
 
@@ -99,6 +109,8 @@ const Lesson = (props) => {
         setTitle(props.data.title);
         setPositionID(props.data.position_id);
         setLessonID(props.data.id)
+        setIsLoading(false);
+        console.log(props.data)
         return () => {
             setDone(true);
         }
@@ -187,6 +199,7 @@ const Lesson = (props) => {
                             Components
                         </label>
                         <div>
+                            <div className={detail.fetchingLesson ? 'fa fa-recycle fa-spin' : 'd-none'} ></div>
                             <button type="button" className={!detail.newLesson ? 'btn bgPreview' : 'd-none'} onClick={newComponent} style={{ marginLeft: '10px' }}>
                                 New
                             </button>
@@ -194,7 +207,13 @@ const Lesson = (props) => {
                                 Cancel
                             </button>
                             <button type="button" className={detail.newLesson ? 'btn btn-success' : 'd-none'} onClick={saveComponent} style={{ marginLeft: '10px' }}>
-                                Save
+                                {isLoading ? (
+                                    <>
+                                        <span className='fa fa-spinner fa-spin'></span>
+                                    </>
+                                ) : (
+                                    'Save'
+                                )}
                             </button>
                         </div>
                     </div>
@@ -214,7 +233,6 @@ const Lesson = (props) => {
                                     className="form-control"
                                     placeholder=""
                                     value={componentPosition}
-                                    onChange={e => setComponentPosition(e.target.value)}
                                     aria-describedby="helpId"
                                     disabled={detail.readOnly}
                                 />
@@ -230,8 +248,8 @@ const Lesson = (props) => {
                                         Select a type
                                     </option>
                                     {auth.componentOptions.map((option) => (
-                                        <option key={option[0]} value={option[0]}>
-                                            {option[1]}
+                                        <option key={option['V']} value={option['V']}>
+                                            {option['D']}
                                         </option>
                                     ))}
                                 </select>

@@ -11,7 +11,6 @@ import { useEdit } from '../../providers/Edit';
 import { useHook } from '../../providers/Hook';
 import StatusTab from './StatusTab';
 import TabMenu from './TabMenu';
-import $ from 'jquery';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
@@ -24,6 +23,7 @@ const BasicEdit = () => {
     const location = useLocation();
     let { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
+    const [subjectIndex, setSubjectIndex] = useState('');
     const auth = useAuth()
 
     const getCourse = (id) => {
@@ -32,7 +32,7 @@ const BasicEdit = () => {
 
     useEffect(() => {
         getCourse(id);
-        window.scrollTo(0 ,0)
+        window.scrollTo(0, 0)
         document.getElementById("basicForm").reset();
     }, [location.key])
 
@@ -40,11 +40,6 @@ const BasicEdit = () => {
         e.preventDefault();
         setIsLoading(true);
         edit.toggleEdit('basic');
-        // Read the form data
-        const form = e.target;
-        const formData = new FormData(form);
-
-        console.log(formData);
 
         var config = {
             method: 'patch',
@@ -52,11 +47,15 @@ const BasicEdit = () => {
             url: `${hook.api}/i/course-detail/`,
             data: {
                 "id": id,
-                "code": basic.courseCode,
-                "name": basic.courseName,
+                "code": basic.courseCode.toUpperCase(),
+                "name": basic.courseName.toUpperCase(),
                 "short_description": basic.courseDescription,
                 "overview": basic.overview,
-                // "institution_id": basic.institution
+                "level": basic.level,
+                "language": basic.language,
+                "entrance_exam_required": basic.entranceExamRequired,
+                "enrollment_type": basic.enrollmentType,
+                "subject_id": basic.subjectId,
             },
             headers: {
                 'Authorization': auth.token
@@ -82,6 +81,10 @@ const BasicEdit = () => {
                 edit.setIsEdit(false);
                 edit.setActiveEdit('');
             });
+    }
+
+    const changeGroup = (e, index) => {
+        setSubjectIndex(index)
     }
 
     return (
@@ -127,33 +130,49 @@ const BasicEdit = () => {
                                 />
                             </div>
                             <div className="form-group mt-3">
-                                <label htmlFor="institution" className='label'>Institution</label>
-                                <input
-                                    type="text"
-                                    name="institution"
-                                    id="institution"
-                                    className="form-control"
-                                    required={true}
-                                    value={basic.institution}
-                                    readOnly={edit.readOnly}
-                                    onChange={e => { basic.setInstitution(e.target.value) }}
-                                />
+                                <div className='row'>
+                                    <div className='col-sm-6'>
+                                        <label htmlFor="institution_id" className='label'>Institution ID</label>
+                                        <input
+                                            type="text"
+                                            name="institution_id"
+                                            id="institution_id"
+                                            className="form-control"
+                                            required={false}
+                                            value={basic.institutionID}
+                                            readOnly={edit.readOnly}
+                                            onChange={e => { basic.setInstitutionID(e.target.value) }}
+                                        />
+                                    </div>
+                                    <div className='col-sm-6'>
+                                        <label htmlFor="institution_name" className='label'>Institution Name</label>
+                                        <input
+                                            type="text"
+                                            name="institution_name"
+                                            id="institution_name"
+                                            className="form-control"
+                                            required={false}
+                                            value={basic.institution}
+                                            readOnly={true}
+                                            onChange={e => { basic.setInstitutionName(e.target.value) }}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             <div className="form-group mt-4">
                                 <label htmlFor="courseDescription" className='label'>Course Short Description</label>
-                                <CKEditor
-                                    editor={ClassicEditor} className="form-control"
+                                <textarea
+                                    className="form-control"
                                     name="courseDescription"
                                     id="courseDescription"
                                     rows="3"
                                     required={true}
                                     disabled={edit.readOnly}
-                                    data={basic.courseDescription}
-                                    onChange={(event, editor) => {
-                                        const data = editor.getData();
-                                        basic.setCourseDescription(data)
-                                    }}
-                                />
+                                    value={basic.courseDescription}
+                                    onChange={
+                                        (e) => basic.setCourseDescription(e.target.value)
+                                    }
+                                ></textarea>
                             </div>
                             <div className="form-group mt-4">
                                 <label htmlFor="overview" className='label'>Course Overview</label>
@@ -169,7 +188,6 @@ const BasicEdit = () => {
                                     onChange={(event, editor) => {
                                         const data = editor.getData();
                                         basic.setOverview(data)
-                                        console.log({ data });
                                     }}
                                 />
                             </div>
@@ -180,19 +198,38 @@ const BasicEdit = () => {
                                         <label htmlFor="subjectGroup" className='label'>Subject Group</label>
                                         <select className='form-control' name="subjectGroup"
                                             id="subjectGroup"
+                                            required={true}
                                             disabled={edit.readOnly}
                                         >
                                             <option>Select Subject Group</option>
+                                            {auth.subjectGroup.map((subject, index) => (
+                                                <option key={subject.subject_group} onClick={e => changeGroup(e, index)} value={subject.subject_group}>
+                                                    {subject.subject_group}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className='col-lg-4'>
-                                        <label htmlFor="subjectName" className='label'>Subject Name</label>
+                                        <label htmlFor="subjectName" className='label' >Subject Name</label>
                                         <select className='form-control'
                                             name="subjectName"
                                             id="subjectName"
+                                            required={true}
                                             disabled={edit.readOnly}
                                         >
                                             <option>Select</option>
+                                            {subjectIndex === '' ? (
+                                                <>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {auth.subjectGroup[subjectIndex].subjects.map((subject) => (
+                                                        <option key={subject.id} value={subject.id} onChange={e => setSubjectIndex(e.target.value)}>
+                                                            {subject.subject_name}
+                                                        </option>
+                                                    ))}
+                                                </>
+                                            )}
                                         </select>
                                     </div>
                                     <div className='col-lg-4'>
@@ -203,26 +240,29 @@ const BasicEdit = () => {
                                             disabled={edit.readOnly}
                                         >
                                             <option>Select</option>
+                                            {auth.languageChoices.map((lang) => (
+                                                <option key={lang['V']} value={lang['V']} onChange={e => basic.setLanguage(e.target.value)} selected={(basic.language === lang['V']) ? true : false}>
+                                                    {lang['D']}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
                             </div>
                             <div className="form-group mt-3">
                                 <label htmlFor="keyWords" className='label'>Keyword Tags</label>
-                                <CKEditor
-                                    editor={ClassicEditor}
+                                <textarea
                                     className="form-control"
-                                    name="keyWords"
-                                    id="keyWords"
-                                    rows="3"
-                                    required={true}
+                                    name="courseDescription"
+                                    id="courseDescription"
+                                    rows="1"
+                                    required={false}
                                     disabled={edit.readOnly}
-                                    data={''}
-                                    onChange={(event, editor) => {
-                                        const data = editor.getData();
-                                        console.log({ data });
-                                    }}
-                                />
+                                    value={basic.keyWords}
+                                // onChange={
+                                //     (e) => basic.seyKeywords(e.target.value)
+                                // }
+                                ></textarea>
                             </div>
                             <div className="form-group mt-3">
                                 <label htmlFor="level" className='label'>Level</label>
@@ -233,6 +273,11 @@ const BasicEdit = () => {
                                     disabled={edit.readOnly}
                                 >
                                     <option> Select Level</option>
+                                    {auth.levelChoices.map((lvl) => (
+                                        <option key={lvl['V']} value={lvl['V']} selected={lvl['V'] === basic.level} onChange={e => basic.setLevel(e.target.value)}>
+                                            {lvl['D']}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <hr className='mt-3' />
@@ -242,14 +287,18 @@ const BasicEdit = () => {
                                         <small className='label' style={{ marginRight: '30px' }}>
                                             Enrollment Type
                                         </small>
-                                        <label className="form-check-label" style={{ marginRight: '30px' }}>
-                                            <input className="form-check-input" type="radio" name="enrollmentType" id="" value="checkedValue" checked
-                                                disabled={edit.readOnly} /> Open
-                                        </label>
-                                        <label className="form-check-label" style={{ marginRight: '30px' }}>
-                                            <input className="form-check-input" type="radio" name="enrollmentType" id="" value="checkedValue"
-                                                disabled={edit.readOnly} /> By Invitation
-                                        </label>
+                                        {(auth.enrollmentChoices.length !== 0) ? (
+                                            <>
+                                                {auth.enrollmentChoices.map((enrollment) => (
+                                                    <div key={enrollment['V']}>
+                                                        <label className="form-check-label" style={{ marginRight: '30px' }}>
+                                                            <input className="form-check-input" type="radio" name="enrollmentType" id="" onChange={e => basic.setEnrollmentType(e.target.value)} value={enrollment['V']} checked={(basic.enrollmentType === enrollment['V']) ? true : false}
+                                                                disabled={edit.readOnly} /> {enrollment['D']}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        ) : null}
                                     </div>
                                 </div>
                                 <div className='col-lg-6'>
@@ -258,12 +307,12 @@ const BasicEdit = () => {
                                             Entrance Exam Required
                                         </small>
                                         <label className="form-check-label" style={{ marginRight: '30px' }}>
-                                            <input className="form-check-input" type="radio" name="examREquired" id="" value="checkedValue" checked
+                                            <input className="form-check-input" type="radio" name="examRequired" id="" value={true} onChange={e => basic.setEntranceExamRequired(e.target.value)} checked={basic.entranceExamRequired === true}
                                                 disabled={edit.readOnly} /> Yes
                                         </label>
 
                                         <label className="form-check-label" style={{ marginRight: '30px' }}>
-                                            <input className="form-check-input" type="radio" name="examREquired" id="" value="checkedValue"
+                                            <input className="form-check-input" type="radio" name="examRequired" id="" value={false} onChange={e => basic.setEntranceExamRequired(e.target.value)} checked={basic.entranceExamRequired === false}
                                                 disabled={edit.readOnly} /> No
                                         </label>
                                     </div>

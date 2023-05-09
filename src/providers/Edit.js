@@ -21,7 +21,8 @@ export const Edit = ({ children }) => {
             setIsEdit(false);
             setActiveEdit('');
             setReadOnly(true);
-            detail.editContentToogle();
+            detail.setEditContent(false)
+            detail.setReadOnly(true)
         } else {
             setIsEdit(true);
             setActiveEdit(page);

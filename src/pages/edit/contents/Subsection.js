@@ -21,7 +21,7 @@ const Subsection = (props) => {
 
     const updatesubsection = (e) => {
         e.preventDefault();
-        NotificationManager.info('Updating <br/>', 'Sub-section', 6000);
+        NotificationManager.info('Updating', 'Sub-section', 6000);
 
         var config = {
             method: 'patch',
@@ -46,7 +46,6 @@ const Subsection = (props) => {
                 } else {
                     NotificationManager.error(response.data.detail, 'Sub-section', 5000)
                 }
-                console.log(response);
             })
             .catch(function (error) {
                 NotificationManager.error(error.message, 'Sub-section', 6000)

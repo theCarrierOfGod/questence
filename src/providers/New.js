@@ -26,6 +26,7 @@ export const New = ({ children }) => {
     const [newSub, setNewSub] = useState(false);
     const [newLes, setNewLes] = useState(false);
 
+
     const addNew = () => {
         if (addNow) {
             setAddNow(false)
@@ -71,8 +72,8 @@ export const New = ({ children }) => {
                 'Authorization': auth.token
             },
             data: {
-                "code": newCourseCode,
-                "name": newCourseName
+                "code": newCourseCode.toUpperCase(),
+                "name": newCourseName.toUpperCase()
             }
         };
 
@@ -117,10 +118,13 @@ export const New = ({ children }) => {
     // start new course on index page ends 
 
     const toggleAddSection = () => {
-        if (addSection)
+        if (addSection) {
             setAddSection(false)
-        else
+        } else {
             setAddSection(true)
+        }
+        setNewLes(false);
+        setNewSub(false)
     }
 
     const sectionCount = (id) => {
@@ -147,28 +151,50 @@ export const New = ({ children }) => {
     }
 
     const toggleAddSubsSection = (id) => {
-        if(!newSub) {
-            setNextSub(detail.getSubPosition());
+        if (!newSub) {
+            // setNextSub(detail.getSubPosition());
             setNewSub(true);
         } else {
             setNewSub(false)
             setNextSub('');
         }
+        setNewLes(false);
+        setAddSection(false);
     }
 
     const toggleAddLesson = (id) => {
-        if(!newLes) {
-            setNextLes(detail.getLesPosition());
+        setNewSub(false)
+        setAddSection(false);
+        if (!newLes) {
             setNewLes(true);
         } else {
-            setNewLes(false)
-            setNextLes('');
+            setNewLes(false);
         }
     }
-    
+
+    const sectionSpecs = () => {
+        if (addSection) {
+            return '0' + (detail.sectionCount + 1);
+        } else {
+            return '';
+        }
+    }
+
+    const subSectionSpecs = () => {
+        if (newSub) {
+            return 'newSub'
+        } else {
+            return '';
+        }
+    }
+
+    useEffect(() => {
+        setAddSection(false)
+    }, [location])
+
 
     return (
-        <NewContext.Provider value={{ newLes, nextLes, addSection, newSub, nextSub, toggleAddLesson, toggleAddSubsSection, setAddSection, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
+        <NewContext.Provider value={{ newLes, nextLes, subSectionSpecs, sectionSpecs, addSection, newSub, nextSub, toggleAddLesson, toggleAddSubsSection, setAddSection, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
             {children}
         </NewContext.Provider>
     )

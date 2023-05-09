@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import Footer from '../../components/footer/Footer'
 import Nav from '../../components/nav/Nav'
@@ -19,6 +19,10 @@ const GradingEdit = () => {
             }
         }
     }
+
+    useEffect(() => {
+        setGrades([])
+    }, [])
     return (
         <>
             {/* navigation bar */}

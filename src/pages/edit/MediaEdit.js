@@ -64,7 +64,6 @@ const MediaEdit = () => {
 
     const uploadImage = (event) => {
         event.preventDefault();
-        let formData = new FormData();
 
         var config = {
             method: 'patch',
@@ -91,7 +90,7 @@ const MediaEdit = () => {
 
     const uploadVideo = (event) => {
         event.preventDefault();
-        let formData = new FormData();
+        
         var config = {
             method: 'patch',
             maxBodyLength: Infinity,
