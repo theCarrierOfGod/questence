@@ -52,6 +52,9 @@ const Nav = () => {
                         <li>
                             Help & Support
                         </li>
+                        <li onClick={auth.logOut} className={style.footerHrefs}>
+                            Logout
+                        </li>
                     </ul>
                 </div>
             </nav>

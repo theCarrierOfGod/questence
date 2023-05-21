@@ -33,10 +33,37 @@ button.menu-link {
     flex-grow: 0;
 }
 
-.menu-link {
+.menu-link,
+.sm-menu-link {
     font-family: 'Raleway';
     padding: 7px 15px;
     text-decoration: none;
+}
+
+.sm-menu-btn {
+    padding: 5px 20px 5px 20px;
+}
+ 
+.sm-menu-btn:hover {
+    cursor: pointer;
+}
+
+.sm-menu-link:hover {
+    background-color: #e6f1f3;
+    cursor: pointer;
+}
+
+.menu-link:focus, .menu-link:active, .btn:active {
+    border: none !important;
+}
+
+.editMenu {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid gray;
+    border-radius: 7px;
+    overflow: hidden;
 }
 
 .leftStraight {

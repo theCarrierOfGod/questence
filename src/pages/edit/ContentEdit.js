@@ -15,7 +15,6 @@ const ContentEdit = () => {
 
     useEffect(() => {
         detail.getDetails(id);
-        console.log(location)
     }, [id, location.key]);
 
     return (

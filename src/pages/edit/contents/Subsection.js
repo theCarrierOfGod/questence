@@ -5,58 +5,22 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAuth } from '../../../providers/Auth';
 import { useParams } from 'react-router-dom';
-import { NotificationManager } from 'react-notifications';
+import { NotificationContainer } from 'react-notifications';
 import axios from 'axios';
 
 const Subsection = (props) => {
     let { id } = useParams();
-    const hook = useHook();
-    const auth = useAuth();
     const detail = useDetail();
-    const [title, setTitle] = useState(props.data.title);
-    const [positionID, setPositionID] = useState(props.data.position_id);
-    const [overview, setOverview] = useState(props.data.overview);
-    const [sectionID, setSectionID] = useState(props.data.id);
     const [done, setDone] = useState(false);
 
-    const updatesubsection = (e) => {
-        e.preventDefault();
-        NotificationManager.info('Updating', 'Sub-section', 6000);
-
-        var config = {
-            method: 'patch',
-            maxBodyLength: Infinity,
-            url: `${hook.api}/i/course-subsection/`,
-            headers: {
-                'Authorization': auth.token
-            },
-            data: {
-                "title": title,
-                "id": sectionID,
-                "overview": overview,
-                "position_id": positionID
-            }
-        };
-
-        axios(config)
-            .then(function (response) {
-                if (response.data.id) {
-                    NotificationManager.success('Updated', 'Sub-section', 6000);
-                    detail.getDetails(id);
-                } else {
-                    NotificationManager.error(response.data.detail, 'Sub-section', 5000)
-                }
-            })
-            .catch(function (error) {
-                NotificationManager.error(error.message, 'Sub-section', 6000)
-            });
-    }
 
     useEffect(() => {
-        setTitle(props.data.title);
-        setPositionID(props.data.position_id);
-        setOverview(props.data.overview);
-        setSectionID(props.data.id)
+        detail.setSubsectionTitle(props.data.title);
+        detail.setSubsectionPositionID(props.data.position_id);
+        detail.setSubsectionOverview(props.data.overview);
+        detail.setSubsectionID(props.data.id);
+        detail.setSubSectionVisibility(props.data.visible);
+        console.log(props.data.visible);
         return () => {
             setDone(true);
         }
@@ -64,9 +28,10 @@ const Subsection = (props) => {
 
     return (
         <>
+            <NotificationContainer />
             <form>
                 <div className='row mb-5'>
-                    <div className='col-lg-6'>
+                    <div className='col-lg-3'>
                         <div class="form-group mt-2">
                             <label className="label" for="">
                                 Position ID
@@ -74,15 +39,14 @@ const Subsection = (props) => {
                             <input
                                 type='text'
                                 placeholder='01'
-                                value={positionID}
+                                defaultValue={detail.subsectionPositionID}
                                 name={'positionID'}
                                 className='form-control'
                                 disabled={detail.readOnly}
-                                onChange={e => setPositionID(e.target.value)}
                             />
                         </div>
                     </div>
-                    <div className='col-lg-6'>
+                    <div className='col-lg-9'>
                         <div class="form-group mt-2">
                             <label className="label" for="">
                                 Sub section Title
@@ -91,9 +55,9 @@ const Subsection = (props) => {
                                 type='text'
                                 placeholder='Input title'
                                 name={'setionTitle'}
-                                value={title}
+                                defaultValue={detail.subsectionTitle}
                                 className='form-control'
-                                onChange={e => setTitle(e.target.value)}
+                                onChange={e => detail.setSubsectionTitle(e.target.value)}
                                 disabled={detail.readOnly} />
                         </div>
                     </div>
@@ -110,27 +74,47 @@ const Subsection = (props) => {
                                 rows="5"
                                 required={true}
                                 disabled={detail.readOnly}
-                                data={overview}
+                                data={detail.subsectionOverview}
                                 onChange={(event, editor) => {
-                                    setOverview(editor.getData());
+                                    detail.setSubsectionOverview(editor.getData());
+                                    console.log(editor.getData());
                                 }}
                             />
                         </div>
                     </div>
                     <div className='col-lg-6'>
-                        <div class="form-group mt-3">
-                            <label className="label" for="visibility">Visibility</label>
-                            <select
-                                class="form-control"
-                                id="sectionVisibility"
-                                disabled={detail.readOnly}
-                                name={'sectionVisibility'}
-                            >
-                                <option>Select one</option>
-                            </select>
+                        <div className="form-check form--inline mt-2 p-0">
+                            <small className='label' style={{ marginRight: '40px' }}>
+                                Visibility
+                            </small>
+                            <label className="form-check-label" style={{ marginRight: '30px' }}>
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="visible"
+                                    id=""
+                                    value={true}
+                                    onChange={e => detail.setSubSectionVisibility(e.target.value)}
+                                    defaultChecked={props.data.visible === true}
+                                    disabled={detail.readOnly}
+                                /> Yes
+                            </label>
+
+                            <label className="form-check-label" style={{ marginRight: '30px' }}>
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="visible"
+                                    id=""
+                                    value={false}
+                                    onChange={e => detail.setSubSectionVisibility(e.target.value)}
+                                    defaultChecked={props.data.visible === false}
+                                    disabled={detail.readOnly}
+                                /> No
+                            </label>
                         </div>
                     </div>
-                    <div className='col-lg-6'>
+                    <div className='col-lg-6 d-none'>
                         <div class="form-group mt-3">
                             <label className="label" for="editable_by">Editable By</label>
                             <select
@@ -141,17 +125,6 @@ const Subsection = (props) => {
                             >
                                 <option>Select group</option>
                             </select>
-                        </div>
-                    </div>
-                    <div className='col-lg-12 d-flex justify-content-start'>
-                        <div className='form-group mt-3'>
-                            <button
-                                className='btn btn-success'
-                                disabled={detail.readOnly}
-                                onClick={updatesubsection}
-                            >
-                                Save
-                            </button>
                         </div>
                     </div>
                 </div>

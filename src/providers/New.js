@@ -4,6 +4,7 @@ import { useAuth } from "./Auth";
 import { useHook } from "./Hook";
 import { useDetail } from "./Detail";
 import { useLocation } from 'react-router-dom';
+import { NotificationManager } from "react-notifications";
 
 const NewContext = createContext(null);
 
@@ -90,6 +91,7 @@ export const New = ({ children }) => {
 
     const deleteCourse = (id) => {
         if (window.confirm("Are you sure you want to delete this course?") === true) {
+            NotificationManager.info('Deleting', 'Course');
             var config = {
                 method: 'delete',
                 maxBodyLength: Infinity,
@@ -102,14 +104,16 @@ export const New = ({ children }) => {
                     "course_id": id,
                 }
             };
-            console.log(id)
 
             axios(config)
                 .then(function (response) {
                     console.log(response)
+                    NotificationManager.success('Course deleted', 'Delete Course');
+                    getMyPrograms();
                 })
                 .catch(function (error) {
                     console.log(error);
+                    NotificationManager.error('You cannot delete a course with sections', 'Delete Course');
                 });
         } else {
             return false;

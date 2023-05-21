@@ -36,55 +36,10 @@ const BasicEdit = () => {
         document.getElementById("basicForm").reset();
     }, [location.key])
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        edit.toggleEdit('basic');
 
-        var config = {
-            method: 'patch',
-            maxBodyLength: Infinity,
-            url: `${hook.api}/i/course-detail/`,
-            data: {
-                "id": id,
-                "code": basic.courseCode.toUpperCase(),
-                "name": basic.courseName.toUpperCase(),
-                "short_description": basic.courseDescription,
-                "overview": basic.overview,
-                "level": basic.level,
-                "language": basic.language,
-                "entrance_exam_required": basic.entranceExamRequired,
-                "enrollment_type": basic.enrollmentType,
-                "subject_id": basic.subjectId,
-            },
-            headers: {
-                'Authorization': auth.token
-            }
-        };
-
-        axios(config)
-            .then(function (response) {
-                setIsLoading(false);
-                edit.setReadOnly(false);
-                edit.setIsEdit(false);
-                edit.setActiveEdit('');
-                if (response.data.id) {
-                    NotificationManager.success('Saved', 'Basic tab', 3000)
-                    // NotificationManager.success(message, title, timeOut, callback, priority);
-                    document.getElementById("basicForm").reset();
-                }
-            })
-            .catch(function (error) {
-                NotificationManager.error(error.message, 'Basic tab', 3000);
-                setIsLoading(false);
-                edit.setReadOnly(false);
-                edit.setIsEdit(false);
-                edit.setActiveEdit('');
-            });
-    }
 
     const changeGroup = (e, index) => {
-        setSubjectIndex(index)
+        setSubjectIndex(index);
     }
 
     return (
@@ -102,7 +57,7 @@ const BasicEdit = () => {
             <div className='container'>
                 {(basic.courseDetails.length === '0' ? null : (
                     <>
-                        <form onSubmit={handleSubmit} id='basicForm'>
+                        <form id='basicForm'>
                             <div className="form-group mt-3">
                                 <label htmlFor="courseCode" className='label'>Course Code</label>
                                 <input
@@ -131,31 +86,22 @@ const BasicEdit = () => {
                             </div>
                             <div className="form-group mt-3">
                                 <div className='row'>
-                                    <div className='col-sm-6'>
-                                        <label htmlFor="institution_id" className='label'>Institution ID</label>
-                                        <input
-                                            type="text"
-                                            name="institution_id"
-                                            id="institution_id"
-                                            className="form-control"
-                                            required={false}
-                                            value={basic.institutionID}
-                                            readOnly={edit.readOnly}
-                                            onChange={e => { basic.setInstitutionID(e.target.value) }}
-                                        />
-                                    </div>
-                                    <div className='col-sm-6'>
-                                        <label htmlFor="institution_name" className='label'>Institution Name</label>
-                                        <input
-                                            type="text"
-                                            name="institution_name"
-                                            id="institution_name"
-                                            className="form-control"
-                                            required={false}
-                                            value={basic.institution}
-                                            readOnly={true}
-                                            onChange={e => { basic.setInstitutionName(e.target.value) }}
-                                        />
+                                    <div className='col-sm-12'>
+                                        <label htmlFor="institution_id" className='label'>Institution</label>
+                                        <select className='form-control'
+                                            name="language"
+                                            id="language"
+                                            disabled={edit.readOnly}
+                                        >
+                                            <option>
+                                                <option value={(basic.institutionArray === []) ? 'Select' : basic.institutionID}>{(basic.institutionArray === []) ? 'select' : basic.institutionArray.institution}</option>
+                                            </option>
+                                            {auth.institutions.map((inst) => (
+                                                <option key={inst['id']} value={inst['id']} onClick={(e) => { basic.setInstitutionID(e.target.value); }} className={(basic.institutionID.id === inst['id']) ? 'd-none' : ''}>
+                                                    {inst['institution']}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +137,6 @@ const BasicEdit = () => {
                                     }}
                                 />
                             </div>
-
                             <div className='form-group mt-3'>
                                 <div className="row">
                                     <div className='col-lg-4'>
@@ -203,7 +148,7 @@ const BasicEdit = () => {
                                         >
                                             <option>Select Subject Group</option>
                                             {auth.subjectGroup.map((subject, index) => (
-                                                <option key={subject.subject_group} onClick={e => changeGroup(e, index)} value={subject.subject_group}>
+                                                <option key={subject.subject_group} selected={(basic.subjectName === subject.id)} onClick={e => { changeGroup(e, index); basic.setSubjectName(subject.id) }} value={subject.subject_group}>
                                                     {subject.subject_group}
                                                 </option>
                                             ))}
@@ -217,14 +162,14 @@ const BasicEdit = () => {
                                             required={true}
                                             disabled={edit.readOnly}
                                         >
-                                            <option>Select</option>
-                                            {subjectIndex === '' ? (
+                                            <option value={(basic.subjectID === '') ? 'select' : basic.subjectID}>{(basic.subjectID === '') ? 'select' : basic.subjectArray.subject_name}</option>
+                                            {subjectIndex.length === 0 ? (
                                                 <>
                                                 </>
                                             ) : (
                                                 <>
                                                     {auth.subjectGroup[subjectIndex].subjects.map((subject) => (
-                                                        <option key={subject.id} value={subject.id} onChange={e => setSubjectIndex(e.target.value)}>
+                                                        <option key={subject.id} value={subject.id} onClick={e => { basic.setSubjectID(e.target.value); }}>
                                                             {subject.subject_name}
                                                         </option>
                                                     ))}
@@ -241,7 +186,7 @@ const BasicEdit = () => {
                                         >
                                             <option>Select</option>
                                             {auth.languageChoices.map((lang) => (
-                                                <option key={lang['V']} value={lang['V']} onChange={e => basic.setLanguage(e.target.value)} selected={(basic.language === lang['V']) ? true : false}>
+                                                <option key={lang['V']} value={lang['V']} onClick={e => basic.setLanguage(e.target.value)} selected={(basic.language === lang['V'])}>
                                                     {lang['D']}
                                                 </option>
                                             ))}
@@ -259,9 +204,9 @@ const BasicEdit = () => {
                                     required={false}
                                     disabled={edit.readOnly}
                                     value={basic.keyWords}
-                                // onChange={
-                                //     (e) => basic.seyKeywords(e.target.value)
-                                // }
+                                    onChange={
+                                        (e) => basic.seyKeywords(e.target.value)
+                                    }
                                 ></textarea>
                             </div>
                             <div className="form-group mt-3">
@@ -292,7 +237,7 @@ const BasicEdit = () => {
                                                 {auth.enrollmentChoices.map((enrollment) => (
                                                     <div key={enrollment['V']}>
                                                         <label className="form-check-label" style={{ marginRight: '30px' }}>
-                                                            <input className="form-check-input" type="radio" name="enrollmentType" id="" onChange={e => basic.setEnrollmentType(e.target.value)} value={enrollment['V']} checked={(basic.enrollmentType === enrollment['V']) ? true : false}
+                                                            <input className="form-check-input" type="radio" name="enrollmentType" id="" onChange={e => basic.setEnrollmentType(e.target.value)} value={enrollment['V']} checked={(basic.enrollmentType === enrollment['V'])}
                                                                 disabled={edit.readOnly} /> {enrollment['D']}
                                                         </label>
                                                     </div>
@@ -328,28 +273,6 @@ const BasicEdit = () => {
                                     className="form-control"
                                     readOnly={edit.readOnly}
                                 />
-                            </div>
-
-                            <div className="form-group mt-3">
-                                <div className="row justify-content-end">
-                                    <div className='col-lg-2'>
-                                        <button
-                                            className='statusButton bgPreview'
-                                            type={'submit'}
-                                            disabled={edit.readOnly}
-                                        >
-                                            {isLoading ? (
-                                                <>
-                                                    <span className='fa fa-spinner fa-spin'></span> <span style={{ fontFamily: 'monospace' }} >
-                                                        SAVING
-                                                    </span>
-                                                </>
-                                            ) : (
-                                                'Save'
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
                         </form>
                     </>

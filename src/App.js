@@ -34,137 +34,139 @@ function App() {
       <Hook>
         <Auth>
           <Detail>
-            <Basic>
-              <SubContent>
-                <New>
-                  <Routes>
-                    <Route
-                      exact
-                      path="/"
-                      element={
-                        <RequireAuth>
-                          <New>
-                            <Index />
-                          </New>
-                        </RequireAuth>}
-                    />
-                    <Route
-                      exact
-                      path="/edit/basic/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <BasicEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/media/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <MediaEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/schedule/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <ScheduleEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/grading/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <GradingEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/courseTeam/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <CourseTeamEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/group/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <GroupEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/resources/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <ResourceEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/content/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <EditCon>
-                              <ContentEdit />
-                            </EditCon>
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/edit/submit/:id"
-                      element={
-                        <RequireAuth>
-                          <Edit>
-                            <SubmitEdit />
-                          </Edit>
-                        </RequireAuth>
-                      }
-                    />
-                    <Route
-                      exact
-                      path="/login"
-                      element={
-                        <Login />
-                      }
-                    />
-                    <Route
-                      exact
-                      path="*"
-                      element={<PageNotFound />}
-                    />
-                  </Routes>
-                </New>
-              </SubContent>
-            </Basic>
+            <Edit>
+              <Basic>
+                <SubContent>
+                  <New>
+                    <Routes>
+                      <Route
+                        exact
+                        path="/"
+                        element={
+                          <RequireAuth>
+                            <New>
+                              <Index />
+                            </New>
+                          </RequireAuth>}
+                      />
+                      <Route
+                        exact
+                        path="/edit/basic/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <BasicEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/media/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <MediaEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/schedule/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <ScheduleEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/grading/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <GradingEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/courseTeam/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <CourseTeamEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/group/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <GroupEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/resources/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <ResourceEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/content/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <EditCon>
+                                <ContentEdit />
+                              </EditCon>
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/edit/submit/:id"
+                        element={
+                          <RequireAuth>
+                            <Edit>
+                              <SubmitEdit />
+                            </Edit>
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/login"
+                        element={
+                          <Login />
+                        }
+                      />
+                      <Route
+                        exact
+                        path="*"
+                        element={<PageNotFound />}
+                      />
+                    </Routes>
+                  </New>
+                </SubContent>
+              </Basic>
+            </Edit>
           </Detail>
         </Auth>
       </Hook>

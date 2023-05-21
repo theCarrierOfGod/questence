@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDetail } from "./Detail";
 
 const EditContext = createContext(null);
@@ -8,11 +8,12 @@ export const Edit = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const detail = useDetail();
+    let { id } = useParams();
     const [isEdit, setIsEdit] = useState(false);
     const [contentEdit, setContentEdit] = useState(false);
     const [activeEdit, setActiveEdit] = useState();
     const [editing, setEditing] = useState('');
-    const [courseTab, setCourseTab] = useState('');
+    const [courseTab, setCourseTab] = useState('basic');
     const [readOnly, setReadOnly] = useState(true);
     const courseStatus = 'Draft';
 
@@ -33,12 +34,12 @@ export const Edit = ({ children }) => {
     const toggleContentEdit = (id) => {
         if (isEdit) {
             if (editing === id) {
-                setEditing('')
+                setEditing('');
             } else {
-                setEditing(id)
+                setEditing(id);
             }
         } else {
-            alert('Page is not editing!')
+            alert('Page is not editing!');
         }
     }
 
@@ -53,6 +54,9 @@ export const Edit = ({ children }) => {
         setActiveEdit('');
         setReadOnly(true);
         setCourseTab(location.pathname.split('/')[2]);
+        return () => {
+            console.log(id)
+        }
     }, [location.key]);
 
     return (

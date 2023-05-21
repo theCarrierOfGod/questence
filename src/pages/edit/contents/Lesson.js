@@ -16,52 +16,16 @@ const Lesson = (props) => {
     const [positionID, setPositionID] = useState(props.data.position_id);
     const [lessonID, setLessonID] = useState();
     const [done, setDone] = useState(false);
-
-    const newPID = () => {
-        return props.data.position_id + ".0" + (props.data.subsections.length + 1)
-    }
-
-    const [componentPosition, setComponentPosition] = useState('')
+    const componentPosition = detail.getComPosition(props.data, positionID);
     const [componentTitle, setComponentTitle] = useState('');
     const [type, setType] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
-    const updateLesson = (e) => {
-        e.preventDefault();
-        NotificationManager.info('Updating', 'Lesson', 6000);
-
-        var config = {
-            method: 'patch',
-            maxBodyLength: Infinity,
-            url: `${hook.api}/i/course-lesson/`,
-            headers: {
-                'Authorization': auth.token
-            },
-            data: {
-                "title": title,
-                "id": lessonID,
-                "position_id": positionID
-            }
-        };
-
-        axios(config)
-            .then(function (response) {
-                if (response.data.id) {
-                    NotificationManager.success('Updated', 'Lesson', 6000);
-                    // detail.getDetails(id);
-                    detail.lessonChanges(lessonID);
-                } else {
-                    NotificationManager.error(response.data.detail, 'Lesson', 5000)
-                }
-            })
-            .catch(function (error) {
-                NotificationManager.error(error.message, 'Lesson', 6000)
-            });
-    }
+    const [key, setKey] = useState('0');
 
     const newComponent = () => {
         if (detail.editContent) {
             detail.toggleNewLesson();
+            setKey(Math.random())
         } else {
             NotificationManager.warning('You have not turned on page editing', 'New Component')
         }
@@ -106,6 +70,16 @@ const Lesson = (props) => {
     }
 
     useEffect(() => {
+        detail.setLessonTitle(props.data.title);
+        detail.setLessonPositionID(props.data.position_id);
+        detail.setLessonID(props.data.id);
+        detail.setLessonVisibility(props.data.visible);
+        return () => {
+            setDone(true);
+        }
+    }, [props.data.id])
+
+    useEffect(() => {
         setTitle(props.data.title);
         setPositionID(props.data.position_id);
         setLessonID(props.data.id)
@@ -121,7 +95,7 @@ const Lesson = (props) => {
             <NotificationContainer />
             <form>
                 <div className='row'>
-                    <div className='col-lg-6'>
+                    <div className='col-lg-3'>
                         <div class="form-group mt-2">
                             <label className="label" for="">
                                 Position ID
@@ -129,15 +103,14 @@ const Lesson = (props) => {
                             <input
                                 type='text'
                                 placeholder='01'
-                                value={positionID}
+                                value={detail.lessonPositionID}
                                 name={'positionID'}
                                 className='form-control'
                                 disabled={detail.readOnly}
-                                onChange={e => setPositionID(e.target.value)}
                             />
                         </div>
                     </div>
-                    <div className='col-lg-6'>
+                    <div className='col-lg-9'>
                         <div class="form-group mt-2">
                             <label className="label" for="">
                                 Lesson Title
@@ -146,26 +119,45 @@ const Lesson = (props) => {
                                 type='text'
                                 placeholder='Input title'
                                 name={'setionTitle'}
-                                value={title}
+                                value={detail.lessonTitle}
                                 className='form-control'
-                                onChange={e => setTitle(e.target.value)}
+                                onChange={e => detail.setLessonTitle(e.target.value)}
                                 disabled={detail.readOnly} />
                         </div>
                     </div>
                     <div className='col-lg-6'>
-                        <div class="form-group mt-3">
-                            <label className="label" for="visibility">Visibility</label>
-                            <select
-                                class="form-control"
-                                id="sectionVisibility"
-                                disabled={detail.readOnly}
-                                name={'sectionVisibility'}
-                            >
-                                <option>Select one</option>
-                            </select>
+                        <div className="form-check form--inline mt-2 p-0">
+                            <small className='label' style={{ marginRight: '40px' }}>
+                                Visibility
+                            </small>
+                            <label className="form-check-label" style={{ marginRight: '30px' }}>
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="visible"
+                                    id=""
+                                    value={true}
+                                    onChange={e => detail.setLessonVisibility(e.target.value)}
+                                    defaultChecked={props.data.visible === true}
+                                    disabled={detail.readOnly}
+                                /> Yes
+                            </label>
+
+                            <label className="form-check-label" style={{ marginRight: '30px' }}>
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="visible"
+                                    id=""
+                                    value={false}
+                                    onChange={e => detail.setLessonVisibility(e.target.value)}
+                                    defaultChecked={props.data.visible === false}
+                                    disabled={detail.readOnly}
+                                /> No
+                            </label>
                         </div>
                     </div>
-                    <div className='col-lg-6'>
+                    <div className='col-lg-6 d-none'>
                         <div class="form-group mt-3">
                             <label className="label" for="editable_by">Editable By</label>
                             <select
@@ -176,17 +168,6 @@ const Lesson = (props) => {
                             >
                                 <option>Select group</option>
                             </select>
-                        </div>
-                    </div>
-                    <div className={detail.readOnly ? 'd-none' : 'col-lg-12 d-flex justify-content-start'}>
-                        <div className='form-group mt-3'>
-                            <button
-                                className='btn btn-success'
-                                disabled={detail.readOnly}
-                                onClick={updateLesson}
-                            >
-                                Save
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -220,7 +201,7 @@ const Lesson = (props) => {
                     <hr />
 
                     <div className={detail.newLesson ? 'row' : 'd-none'}>
-                        <div className='col-lg-3'>
+                        <div className='col-md-3'>
                             <div className="form-group mb-3">
                                 <label className="label" htmlFor="courseName">
                                     Position ID
@@ -232,13 +213,13 @@ const Lesson = (props) => {
                                     id="courseName"
                                     className="form-control"
                                     placeholder=""
-                                    value={componentPosition}
+                                    value={detail.getComPosition(props.data, positionID)}
                                     aria-describedby="helpId"
                                     disabled={detail.readOnly}
                                 />
                             </div>
                         </div>
-                        <div className='col-lg-3'>
+                        <div className='col-md-3'>
                             <div className="form-group mb-3">
                                 <label className="label" htmlFor="courseName">
                                     Type
@@ -282,7 +263,7 @@ const Lesson = (props) => {
                         <>
                             {(props.data.components.length !== 0) ? (
                                 <>
-                                    <Component data={props.data.components} />
+                                    <Component data={props.data.components} key={key} />
                                 </>
                             ) : null}
                         </>

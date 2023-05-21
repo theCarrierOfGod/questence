@@ -4,6 +4,7 @@ import { useAuth } from "./Auth";
 import { useHook } from "./Hook";
 import { useEdit } from "./Edit";
 import { useLocation } from "react-router-dom";
+import { NotificationManager } from "react-notifications";
 
 const DetailContext = createContext(null);
 
@@ -34,6 +35,23 @@ export const Detail = ({ children }) => {
 
     const [fetchingLesson, setFetchingLesson] = useState(false);
 
+    const [sectionID, setSectionID] = useState('')
+    const [sectionTitle, setSectionTitle] = useState('');
+    const [sectionPositionID, setSectionPositionID] = useState('');
+    const [sectionOverview, setSectionOverview] = useState('');
+    const [sectionVisibility, setSectionVisibility] = useState();
+
+    const [subsectionID, setSubsectionID] = useState('')
+    const [subsectionTitle, setSubsectionTitle] = useState('');
+    const [subsectionPositionID, setSubsectionPositionID] = useState('');
+    const [subsectionOverview, setSubsectionOverview] = useState('')
+    const [subsectionVisibility, setSubSectionVisibility] = useState();
+
+    const [lessonID, setLessonID] = useState('')
+    const [lessonTitle, setLessonTitle] = useState('');
+    const [lessonPositionID, setLessonPositionID] = useState('');
+    const [lessonVisibility, setLessonVisibility] = useState();
+
     useEffect(() => {
         setSectionCount(0)
         setSections([])
@@ -47,9 +65,9 @@ export const Detail = ({ children }) => {
         setData([])
         setTitle('')
         setNewForm(false)
-      return (data) => {
+        return (data) => {
 
-      }
+        }
     }, [location])
 
     const toggleView = (id, pass, vid) => {
@@ -155,13 +173,20 @@ export const Detail = ({ children }) => {
         return position_id + '.' + now;
     }
 
+    const getComPosition = (lesArray, position_id) => {
+        let now = "0" + (lesArray.components.length + 1);
+        return position_id + '.' + now;
+    }
+
     const editContentToogle = () => {
         if (!editContent) {
             setEditContent(true)
             setReadOnly(false)
+            console.log(true)
         } else {
             setEditContent(false)
             setReadOnly(true)
+            console.log(false)
         }
     }
 
@@ -223,6 +248,116 @@ export const Detail = ({ children }) => {
         return sections[index].subsections;
     }
 
+    const updateContent = (id) => {
+        if (activeLesson !== '') {
+            NotificationManager.info('Updating', 'Lesson', 6000);
+
+            if (lessonPositionID === 0 || lessonTitle === 0) {
+                NotificationManager.error('Please fill all required fields', 'Lesson', 5000)
+                return false;
+            }
+
+            var config = {
+                method: 'patch',
+                maxBodyLength: Infinity,
+                url: `${hook.api}/i/course-lesson/`,
+                headers: {
+                    'Authorization': auth.token
+                },
+                data: {
+                    "title": lessonTitle,
+                    "id": lessonID,
+                    "position_id": lessonPositionID,
+                    "visible": lessonVisibility,
+                }
+            };
+
+            axios(config)
+                .then(function (response) {
+                    if (response.data.id) {
+                        NotificationManager.success('Updated', 'Lesson', 6000);
+                        lessonChanges(lessonID)
+                    } else {
+                        NotificationManager.error(response.data.detail, 'Lesson', 5000)
+                    }
+                })
+                .catch(function (error) {
+                    NotificationManager.error(error.message, 'Lesson', 6000)
+                });
+        } else if (activeSub !== '') {
+            NotificationManager.info('Updating', 'Subsection', 6000);
+
+            if (subsectionOverview.length === 0 || subsectionPositionID === 0 || subsectionTitle === 0) {
+                NotificationManager.error('Please fill all required fields', 'Subsection', 5000)
+                return false;
+            }
+
+            var config = {
+                method: 'patch',
+                maxBodyLength: Infinity,
+                url: `${hook.api}/i/course-subsection/`,
+                headers: {
+                    'Authorization': auth.token
+                },
+                data: {
+                    "title": subsectionTitle,
+                    "id": subsectionID,
+                    "overview": subsectionOverview,
+                    "position_id": subsectionPositionID,
+                    "visible": subsectionVisibility,
+                }
+            };
+
+            axios(config)
+                .then(function (response) {
+                    if (response.data.id) {
+                        NotificationManager.success('Updated', 'Subsection', 6000);
+                        getDetails(id);
+                    } else {
+                        NotificationManager.error(response.data.detail, 'Subsection', 5000)
+                    }
+                })
+                .catch(function (error) {
+                    NotificationManager.error(error.message, 'Subsection', 6000)
+                });
+        } else if (viewing !== '') {
+            NotificationManager.info('Updating', 'Subsection', 6000);
+
+            if (sectionOverview.length === 0 || sectionPositionID === 0 || sectionTitle === 0) {
+                NotificationManager.error('Please fill all required fields', 'Subsection', 5000)
+                return false;
+            }
+            var config = {
+                method: 'patch',
+                maxBodyLength: Infinity,
+                url: `${hook.api}/i/course-section/`,
+                headers: {
+                    'Authorization': auth.token
+                },
+                data: {
+                    "title": sectionTitle,
+                    "id": sectionID,
+                    "overview": sectionOverview,
+                    "position_id": sectionPositionID,
+                    "visible": sectionVisibility,
+                }
+            };
+
+            axios(config)
+                .then(function (response) {
+                    if (response.data.id) {
+                        NotificationManager.success('Updated', 'Section', 6000);
+                        getDetails(id);
+                    } else {
+                        NotificationManager.error(response.data.detail, 'Section', 5000)
+                    }
+                })
+                .catch(function (error) {
+                    NotificationManager.error(error.message, 'Section', 6000)
+                });
+        }
+    }
+
     useEffect(() => {
         return () => {
             setNewLesson(false)
@@ -231,7 +366,31 @@ export const Detail = ({ children }) => {
 
 
     return (
-        <DetailContext.Provider value={{ getArray, fetchingLesson, setEditContent, setReadOnly, lessonChanges, activeComp, toggleComponentEdit, editContent, editComp, compReadOnly, setData, readOnly, toggleNewLesson, editContentToogle, activeSub, subID, viewingID, getLesPosition, getSubPosition, activeLesson, viewing, data, title, toggleView, toggleActiveSub, toggleActiveLesson, toggleNew, newSubSection, newLesson, getDetails, sectionCount, sections, contentError, gettingContent }}>
+        <DetailContext.Provider
+            value={{
+                lessonID, setLessonID,
+                lessonPositionID, setLessonPositionID,
+                lessonVisibility, setLessonVisibility,
+                lessonTitle, setLessonTitle,
+                subsectionID, setSubsectionID,
+                subsectionOverview, setSubsectionOverview,
+                subsectionPositionID, setSubsectionPositionID,
+                subsectionTitle, setSubsectionTitle,
+                subsectionVisibility, setSubSectionVisibility,
+                getArray, sectionID, setSectionID,
+                sectionVisibility, setSectionVisibility,
+                sectionPositionID, setSectionPositionID,
+                sectionOverview, setSectionOverview,
+                getComPosition, setSectionTitle, sectionTitle,
+                updateContent, fetchingLesson, setEditContent, setReadOnly,
+                lessonChanges, activeComp, toggleComponentEdit, editContent, editComp,
+                compReadOnly, setData, readOnly, toggleNewLesson,
+                editContentToogle, activeSub, subID, viewingID, getLesPosition,
+                getSubPosition, activeLesson, viewing, data, title, toggleView,
+                toggleActiveSub, toggleActiveLesson, toggleNew, newSubSection,
+                newLesson, getDetails, sectionCount, sections,
+                contentError, gettingContent
+            }}>
             {children}
         </DetailContext.Provider>
     )

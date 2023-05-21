@@ -363,18 +363,24 @@ const ContentNav = () => {
             <div className='conMenu w-100' style={{ display: 'inline-flex' }}>
                 <nav className='fg-1'>
                     <div className='d-flex'>
-                        <button className='menu-link text-primary' onClick={newSection}>
+                        <button disabled={edit.readOnly} className={'btn menu-link text-primary'} onClick={newSection}>
                             New
                         </button>
-                        <button className='menu-link' style={{ color: '#00798C' }} onClick={editContentHere}>
+                        <button disabled={edit.readOnly} className={!detail.editContent ? 'btn menu-link' : 'd-none'} style={{ color: '#00798C' }} onClick={editContentHere}>
                             Edit
                         </button>
-                        <button className='menu-link' style={{ color: '#FF4040' }} onClick={deleteSelected}>
+                        <button disabled={edit.readOnly} className={detail.editContent ? 'btn menu-link' : 'd-none'} style={{ color: '#00798C' }} onClick={() => detail.updateContent(id)}>
+                            Save
+                        </button>
+                        <button disabled={detail.readOnly} className={detail.editContent ? 'btn menu-link txtCancel' : 'd-none'} style={{ color: 'rgba(245, 113, 113)' }} onClick={() =>editContentHere}>
+                            Cancel
+                        </button>
+                        <button disabled={edit.readOnly} className={!detail.editContent ? 'btn menu-link' : 'd-none'} style={{ color: '#FF4040' }} onClick={deleteSelected}>
                             Delete
                         </button>
                     </div>
                 </nav>
-                <div className='fg-0 d-flex' >
+                <div className='fg-0 d-flex d-none' >
                     <span className='menu-link'>
                         Preview
                     </span>

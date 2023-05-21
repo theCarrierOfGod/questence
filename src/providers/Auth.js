@@ -22,6 +22,7 @@ export const Auth = ({ children }) => {
     const [enrollmentChoices, setEnrollmentChoices] = useState([]);
     const [videosOptions, setVideoOptions] = useState([]);
     const [exerciseOptions, setExerciseOptions] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
 
     const checkIfLoggedIn = () => {
         if (window.localStorage.getItem('username')) {
@@ -62,13 +63,13 @@ export const Auth = ({ children }) => {
         axios(config)
             .then(function (response) {
                 storeActiveToken(response.data.user.username, response.data.token);
-                NotificationManager.success('success', 'Login', 2000);
+                NotificationManager.success('success', 'Login', 1000);
                 setTimeout(() => {
                     navigate('/')
-                }, 2000);
+                }, 3000);
             })
             .catch(function (error) {
-                NotificationManager.error('failed', 'Login');
+                NotificationManager.error('failed', 'Login', 1000);
             });
     }
 
@@ -91,42 +92,42 @@ export const Auth = ({ children }) => {
     }
 
     const getChoices = () => {
-        var config = {
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: `${hook.api}/i/choices/`,
-            headers: {
-                'Authorization': token
-            }
-        };
+        if (window.localStorage.getItem('username')) {
+            var config = {
+                method: 'get',
+                maxBodyLength: Infinity,
+                url: `${hook.api}/i/choices/`,
+                headers: {
+                    'Authorization': token
+                }
+            };
 
-        axios(config)
-            .then(function (response) {
-                setComponentOptions(response.data.component_types_choices);
-                setHtmlOptions(response.data.html_choices);
-                setSubjectGroup(response.data.subject);
-                setLanguageChoices(response.data.language_choices);
-                setLevelChoices(response.data.level_choices);
-                setEnrollmentChoices(response.data.enrollment_source_choices);
-                setVideoOptions(response.data.video_choices);
-                setExerciseOptions(response.data.exercise_type_choices)
-            })
+            axios(config)
+                .then(function (response) {
+                    setComponentOptions(response.data.component_types_choices);
+                    setHtmlOptions(response.data.html_choices);
+                    setSubjectGroup(response.data.subject);
+                    setLanguageChoices(response.data.language_choices);
+                    setLevelChoices(response.data.level_choices);
+                    setEnrollmentChoices(response.data.enrollment_source_choices);
+                    setVideoOptions(response.data.video_choices);
+                    setExerciseOptions(response.data.exercise_type_choices)
+                    setInstitutions(response.data.institution)
+                })
+        }
     }
 
     useEffect(() => {
         checkIfLoggedIn();
         sessionExpired();
+        getChoices()
         return () => {
             window.scrollTo(0, 0);
         }
-    }, [location.key])
-
-    useEffect(() => {
-        getChoices()
-    }, [])
+    }, [location.key]);
 
     return (
-        <AuthContext.Provider value={{ userName, token, videosOptions, exerciseOptions, componentOptions, enrollmentChoices, levelChoices, subjectGroup, languageChoices, htmlOptions, getChoices, isLoggedIn, logUserIn, logOut }}>
+        <AuthContext.Provider value={{ userName, token, videosOptions, exerciseOptions, componentOptions, institutions, enrollmentChoices, levelChoices, subjectGroup, languageChoices, htmlOptions, getChoices, isLoggedIn, logUserIn, logOut }}>
             {children}
         </AuthContext.Provider>
     )

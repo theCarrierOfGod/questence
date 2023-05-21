@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDetail } from '../../../providers/Detail';
 import { useAuth } from '../../../providers/Auth';
 import { useParams } from 'react-router-dom';
@@ -19,6 +19,7 @@ export const Input = (props) => {
     const [title, setTitle] = useState(props.data.title);
     const [isLoading, setIsLoading] = useState(false);
     const [deleting, setDeleting] = useState(false)
+    const [showMen, setShowMen] = useState(false);
 
     // html data
     const [html_type, setHtmlType] = useState(props.data.html_type);
@@ -52,6 +53,9 @@ export const Input = (props) => {
     const [show_answer, setShowAnswer] = useState(props.data.show_answer);
     const [exercise_overview, setExerciseOverview] = useState(props.data.exercise_overview);
 
+    useEffect(() => {
+        setShowMen(false)
+    }, [props.key]);
 
     const [patchData, setPatchData] = useState({
         lesson_id: props.data.lesson_id,
@@ -89,43 +93,38 @@ export const Input = (props) => {
     }
 
     const deleteComponent = (id) => {
-        if (detail.editComp) {
-            if (window.confirm("Are you sure you want to delete this component?") === true) {
-                NotificationManager.info('Deleting', 'Component', 6000);
-                setDeleting(true)
-                var config = {
-                    method: 'delete',
-                    maxBodyLength: Infinity,
-                    url: `${hook.api}/i/course-component/`,
-                    headers: {
-                        'Authorization': auth.token
-                    },
-                    data: {
-                        id: props.data.id
-                    }
-                };
+        if (window.confirm("Are you sure you want to delete this component?") === true) {
+            NotificationManager.info('Deleting', 'Component', 6000);
+            setDeleting(true)
+            var config = {
+                method: 'delete',
+                maxBodyLength: Infinity,
+                url: `${hook.api}/i/course-component/`,
+                headers: {
+                    'Authorization': auth.token
+                },
+                data: {
+                    id: props.data.id
+                }
+            };
 
-                axios(config)
-                    .then(function (response) {
-                        if (response.data.message) {
-                            NotificationManager.success('Deleted', 'Component', 6000);
-                            setDeleting(false)
-                            detail.lessonChanges(props.data.lesson_id);
-                        } else {
-                            NotificationManager.error(response.data.detail, 'Component', 5000)
-                            setDeleting(false)
-                        }
-                    })
-                    .catch(function (error) {
-                        NotificationManager.error(error.message, 'Component', 6000)
+            axios(config)
+                .then(function (response) {
+                    if (response.data.message) {
+                        NotificationManager.success('Deleted', 'Component', 6000);
                         setDeleting(false)
-                    });
-            } else {
-                NotificationManager.info('Cancelled', 'Component', 6000)
-            }
-
+                        detail.lessonChanges(props.data.lesson_id);
+                    } else {
+                        NotificationManager.error(response.data.detail, 'Component', 5000)
+                        setDeleting(false)
+                    }
+                })
+                .catch(function (error) {
+                    NotificationManager.error(error.message, 'Component', 6000)
+                    setDeleting(false)
+                });
         } else {
-            NotificationManager.warning('Component cannot be deleted', 'Delete');
+            NotificationManager.info('Delete component', 'Cancelled by user', 6000)
         }
     }
 
@@ -182,6 +181,14 @@ export const Input = (props) => {
                 setIsLoading(false)
             });
     }
+
+    const toogleshowMen = () => {
+        if (showMen) {
+            setShowMen(false)
+        } else {
+            setShowMen(true)
+        }
+    }
     return (
         <>
             <NotificationContainer />
@@ -196,13 +203,26 @@ export const Input = (props) => {
                             'Save'
                         )}
                     </button>
-                    <button className={(detail.activeComp !== props.data.id) ? 'btn btn-primary' : 'd-none'} type={'button'} onClick={() => editComponent(props.data.id)} style={{ marginLeft: '10px' }}>
+                    <div className={(detail.activeComp !== props.data.id) ? 'd-block' : 'd-none'} style={{ position: 'relative' }}>
+                        <span className='fa fa-ellipsis-v sm-menu-btn' onClick={() => toogleshowMen()}></span>
+                        <div className={showMen ? 'd-block bg-white' : 'd-none'} style={{ position: 'absolute', height: 'max-content', width: '100px', right: '0', borderRadius: '8px' }}>
+                            <ul className='editMenu'>
+                                <li className='sm-menu-link' onClick={() => { editComponent(props.data.id); toogleshowMen() }}>
+                                    Edit
+                                </li>
+                                <li className='sm-menu-link' onClick={() => { deleteComponent(props.data.id); toogleshowMen() }}>
+                                    Delete
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {/* <button className={(detail.activeComp !== props.data.id) ? 'btn btn-primary' : 'd-none'} type={'button'} onClick={() => editComponent(props.data.id)} style={{ marginLeft: '10px' }}>
                         Edit
-                    </button>
+                    </button> */}
                     <button className={(detail.activeComp === props.data.id) ? 'btn btn-warning' : 'd-none'} type={'button'} onClick={() => editComponent(props.data.id)} style={{ marginLeft: '10px' }}>
                         Cancel
                     </button>
-                    <button className={(detail.activeComp === props.data.id) ? 'btn btn-danger' : 'd-none'} type={'button'} onClick={() => deleteComponent(props.data.id)} style={{ marginLeft: '10px' }}>
+                    {/* <button className={(detail.activeComp === props.data.id) ? 'btn btn-danger' : 'd-none'} type={'button'} onClick={() => deleteComponent(props.data.id)} style={{ marginLeft: '10px' }}>
                         {deleting ? (
                             <>
                                 <span className='fa fa-spinner fa-spin'></span>
@@ -210,7 +230,7 @@ export const Input = (props) => {
                         ) : (
                             'Delete'
                         )}
-                    </button>
+                    </button> */}
                 </div>
                 <div className='row'>
                     <div className='col-lg-3 col-4'>
@@ -243,9 +263,11 @@ export const Input = (props) => {
                                 onChange={e => { updateData(e); setType(e.target.value) }}
                             >
                                 {auth.componentOptions.map((option) => (
-                                    <option key={option['V']} value={option['V']} selected={(type === option['V']) ? true : false}>
-                                        {option['D']}
-                                    </option>
+                                    <>
+                                        <option key={option['V']} value={option['V']} className={(option['V'] === 'AU' || option['V'] === 'PR') ? 'd-none ' : 'd-block' } selected={(type === option['V']) ? true : false}>
+                                            {option['D']}
+                                        </option>
+                                    </>
                                 ))}
                             </select>
                         </div>
@@ -431,6 +453,8 @@ export const Input = (props) => {
                                     </div>
                                 </div>
                             </div>
+                            <hr />
+                            <br></br>
                         </>
                     ) : null}
 
@@ -459,7 +483,7 @@ export const Input = (props) => {
                                     </select>
                                 </div>
                             </div>
-                            <div className='col-lg-12'>
+                            <div className={(html_type === 'HT') ? 'col-lg-12' : 'd-none'}>
                                 <div className="form-group mb-3 w-100">
                                     <label className="label" htmlFor="html_content">
                                         HTML content
@@ -482,7 +506,7 @@ export const Input = (props) => {
                                     />
                                 </div>
                             </div>
-                            <div className='col-lg-12'>
+                            <div className={(html_type === 'IF') ? 'col-lg-12' : 'd-none'}>
                                 <div className="form-group mb-3">
                                     <label className="label" htmlFor="html_url">
                                         HTML URL
@@ -682,13 +706,8 @@ export const Input = (props) => {
                                     </div>
                                 </div>
                             </div>
-                        </>
-                    ) : null}
-
-                    {/* PR component */}
-                    {(type === "PR") ? (
-                        <>
-                            PRIVATE component
+                            <hr />
+                            <br></br>
                         </>
                     ) : null}
 
@@ -756,13 +775,8 @@ export const Input = (props) => {
                                     </div>
                                 </div>
                             </div>
-                        </>
-                    ) : null}
-
-                    {/* aUDIO component */}
-                    {(type === "AU") ? (
-                        <>
-                            AUDIO component NULL
+                            <hr />
+                            <br></br>
                         </>
                     ) : null}
                 </div>

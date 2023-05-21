@@ -18,6 +18,7 @@ import Footer from '../../components/footer/Footer';
 import Progress from './components/progress/Progress';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { useNew } from '../../providers/New';
+import { NotificationContainer } from 'react-notifications';
 
 const Index = () => {
 
@@ -25,7 +26,7 @@ const Index = () => {
     return (
         <>
             <Nav />
-
+            <NotificationContainer />
             <div className={`${style.menu} container d-flex justify-content-between`}>
                 <h4 className={style.menuTitle}>
                     My Courses

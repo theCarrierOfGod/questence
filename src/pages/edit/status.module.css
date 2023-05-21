@@ -14,6 +14,11 @@
     border: none;
 }
 
+.bgCancel {
+    background: rgba(245, 113, 113);
+    border: none;
+}
+
 .bgPreview {
     background: #00798C;
     border: none;

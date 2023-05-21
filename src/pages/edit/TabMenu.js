@@ -26,7 +26,7 @@ const TabMenu = () => {
                     <div className={(edit.courseTab === "courseTeam") ? `${tabstyle.grow} ${tabstyle.active}` : `${tabstyle.grow}`} onClick={(e) => edit.goToTab("courseTeam", id)}>
                         Course Team
                     </div>
-                    <div className={(edit.courseTab === "group") ? `${tabstyle.grow} ${tabstyle.active}` : `${tabstyle.grow}`} onClick={(e) => edit.goToTab("group", id)}>
+                    <div className={(edit.courseTab === "group") ? `${tabstyle.grow} ${tabstyle.active} d-none` : `${tabstyle.grow} d-none` } onClick={(e) => edit.goToTab("group", id)}>
                         Group
                     </div>
                     <div className={(edit.courseTab === "resources") ? `${tabstyle.grow} ${tabstyle.active}` : `${tabstyle.grow}`} onClick={(e) => edit.goToTab("resources", id)}>
