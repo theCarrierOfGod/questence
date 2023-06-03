@@ -45,15 +45,15 @@ export const Auth = ({ children }) => {
         navigate('/');
     }
 
-    const logUserIn = () => {
+    const logUserIn = (username, password) => {
         NotificationManager.info('logging in', 'Login', 10000);
         var config = {
             method: 'post',
             maxBodyLength: Infinity,
             url: `https://tqfe-develop.herokuapp.com/cs/instructor-login/`,
             data: {
-                "username": "instructorone",
-                "password": "QI200901"
+                "username": username,
+                "password": password
             },
             headers: {
                 'Authorization': 'token b7dde8e9489fcfeb60a8df584f07eec2b56cb19c6f6a98773705775e659da5fd'

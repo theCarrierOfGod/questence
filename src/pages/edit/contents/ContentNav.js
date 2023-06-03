@@ -366,13 +366,13 @@ const ContentNav = () => {
                         <button disabled={edit.readOnly} className={'btn menu-link text-primary'} onClick={newSection}>
                             New
                         </button>
-                        <button disabled={edit.readOnly} className={!detail.editContent ? 'btn menu-link' : 'd-none'} style={{ color: '#00798C' }} onClick={editContentHere}>
+                        <button disabled={edit.readOnly} className={!detail.editContent ? 'btn menu-link' : 'd-none'} style={{ color: '#00798C' }} onClick={() => editContentHere()}>
                             Edit
                         </button>
                         <button disabled={edit.readOnly} className={detail.editContent ? 'btn menu-link' : 'd-none'} style={{ color: '#00798C' }} onClick={() => detail.updateContent(id)}>
                             Save
                         </button>
-                        <button disabled={detail.readOnly} className={detail.editContent ? 'btn menu-link txtCancel' : 'd-none'} style={{ color: 'rgba(245, 113, 113)' }} onClick={() =>editContentHere}>
+                        <button disabled={detail.readOnly} className={detail.editContent ? 'btn menu-link txtCancel' : 'd-none'} style={{ color: 'rgba(245, 113, 113)' }} onClick={() => editContentHere()}>
                             Cancel
                         </button>
                         <button disabled={edit.readOnly} className={!detail.editContent ? 'btn menu-link' : 'd-none'} style={{ color: '#FF4040' }} onClick={deleteSelected}>

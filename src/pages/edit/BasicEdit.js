@@ -93,9 +93,8 @@ const BasicEdit = () => {
                                             id="language"
                                             disabled={edit.readOnly}
                                         >
-                                            <option>
-                                                <option value={(basic.institutionArray === []) ? 'Select' : basic.institutionID}>{(basic.institutionArray === []) ? 'select' : basic.institutionArray.institution}</option>
-                                            </option>
+                                            <option value={(basic.institutionArray === []) ? 'Select' : basic.institutionID}>{(basic.institutionArray === []) ? 'select' : basic.institutionArray.institution}</option>
+
                                             {auth.institutions.map((inst) => (
                                                 <option key={inst['id']} value={inst['id']} onClick={(e) => { basic.setInstitutionID(e.target.value); }} className={(basic.institutionID.id === inst['id']) ? 'd-none' : ''}>
                                                     {inst['institution']}
@@ -162,7 +161,7 @@ const BasicEdit = () => {
                                             required={true}
                                             disabled={edit.readOnly}
                                         >
-                                            <option value={(basic.subjectID === '') ? 'select' : basic.subjectID}>{(basic.subjectID === '') ? 'select' : basic.subjectArray.subject_name}</option>
+                                            {/* <option value={(basic.subjectID === '') ? 'select' : basic.subjectID}>{(basic.subjectID === '') ? 'select' : basic.subjectArray.subject_name}</option> */}
                                             {subjectIndex.length === 0 ? (
                                                 <>
                                                 </>

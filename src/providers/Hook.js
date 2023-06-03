@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HookContext = createContext(null);
 
@@ -11,6 +11,7 @@ export const Hook = ({ children }) => {
     const [rightTab, setRightTab] = useState(false);
     const [contLess, setContLess] = useState(false);
     const [current, setCurrent] = useState();
+    const location = useLocation();
 
     const goHome = () => {
         Navigate('/');
@@ -39,6 +40,13 @@ export const Hook = ({ children }) => {
     const editTab = () => {
         return courseTab;
     }
+
+    useEffect(() => {
+        
+        return () => {
+            setRightTab(false)
+        };
+    }, [location]);
 
     return (
         <HookContext.Provider value={{ api, goHome, editTab, changeCurrent, current, toggleRight, contLess, showLesson, rightTab, courseTab, setCourseTab }}>

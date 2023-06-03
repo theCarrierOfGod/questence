@@ -22,6 +22,7 @@ import ResourceEdit from './pages/edit/ResourceEdit';
 import GroupEdit from './pages/edit/GroupEdit';
 import { EditCon } from './providers/EditContent';
 import { Detail } from './providers/Detail';
+import Forgot from './auth/Forgot';
 
 function App() {
   const location = useLocation();
@@ -46,8 +47,7 @@ function App() {
                           <RequireAuth>
                             <New>
                               <Index />
-                            </New>
-                          </RequireAuth>}
+                            </New>                          </RequireAuth>}
                       />
                       <Route
                         exact
@@ -155,6 +155,13 @@ function App() {
                         path="/login"
                         element={
                           <Login />
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/forgot-password"
+                        element={
+                          <Forgot />
                         }
                       />
                       <Route

@@ -102,11 +102,6 @@ const Footer = () => {
                                         Privacy Policy
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link onClick={auth.logOut} className={style.footerHrefs}>
-                                        Logout
-                                    </Link>
-                                </li>
                             </ul>
                         </div>
                         <div className='col-sm-12'>

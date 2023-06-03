@@ -46,16 +46,16 @@ export const Edit = ({ children }) => {
     const goToTab = (tabname, id) => {
         navigate(`/edit/${tabname}/${id}`);
         setCourseTab(tabname);
+        if (isEdit) {
+            setActiveEdit(tabname);
+        }
     }
 
     useEffect(() => {
-        setIsEdit(false);
         setContentEdit(false);
-        setActiveEdit('');
-        setReadOnly(true);
         setCourseTab(location.pathname.split('/')[2]);
         return () => {
-            console.log(id)
+            console.log(location.pathname.split('/')[2])
         }
     }, [location.key]);
 
