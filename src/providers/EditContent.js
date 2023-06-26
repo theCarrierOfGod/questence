@@ -6,6 +6,7 @@ const EditConContext = createContext(null);
 export const EditCon = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const id = window.localStorage.getItem('id');
     const [isEdit, setIsEdit] = useState(false);
     const [contentEdit, setContentEdit] = useState(false);
     const [activeEdit, setActiveEdit] = useState();
@@ -39,7 +40,7 @@ export const EditCon = ({ children }) => {
     }
 
     const goToTab = (tabname, id) => {
-        navigate(`/edit/${tabname}/${id}`);
+        navigate(`/authoring/edit/${tabname}/${id}`);
         setCourseTab(tabname);
     }
 
@@ -69,7 +70,7 @@ export const EditCon = ({ children }) => {
         setActiveEdit('');
         setReadOnly(true);
         setCourseTab(location.pathname.split('/')[2]);
-    }, [location.key]);
+    }, [location.pathname]);
 
     return (
         <EditConContext.Provider value={{ isEdit, section, subsection, toggleSection, toggleSubSection, toggleContentEdit, editing, contentEdit, setReadOnly, setIsEdit, setActiveEdit, toggleEdit, activeEdit, courseTab, setCourseTab, goToTab, courseStatus, readOnly, }}>

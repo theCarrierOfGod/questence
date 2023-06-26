@@ -1,0 +1,7 @@
+.active {
+    background-color: #f2f8f9;
+}
+
+.active > td {
+    background-color: transparent !important;
+}

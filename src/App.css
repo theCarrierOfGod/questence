@@ -238,15 +238,35 @@ body {
   border: 1px solid #00798C;
 }
 
+.menu-link {
+
+  text-decoration: none !important;
+}
+
+.br-25 {
+  border-radius: 25px !important;
+}
+
+.mr-2 {
+  margin-right: 2rem;
+}
+
 .menu-link:focus,
 .menu-link:active,
 .btn:active {
   border: none !important;
+  box-shadow: none !important;
+}
+
+
+.menu-link:hover {
+  color: #ffffff;
 }
 
 .btn:disabled,
 span:disabled {
   opacity: 0.35 !important;
+  border: none !important;
 }
 
 .statusButton {
@@ -274,6 +294,12 @@ span:disabled {
   color: rgba(245, 113, 113);
 }
 
+.bgCancel {
+  background-color: rgba(245, 113, 113) !important;
+  color: white !important;
+  font-weight: bolder;
+}
+
 .bgPreview {
   background: #00798C;
   border: none;
@@ -283,4 +309,14 @@ span:disabled {
 .bgReturn {
   background-color: #fff;
   border: 1px solid #00798C;
+}
+
+.ck.ck-editor__editable_inline[dir=ltr] {
+  text-align: left;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.btn-danger {
+  background-color: rgba(245, 113, 113) !important;
 }

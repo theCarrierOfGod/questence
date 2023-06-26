@@ -19,6 +19,7 @@
     "react-notifications": "^1.7.4",
     "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
+    "sweetalert": "^2.1.2",
     "util": "^0.12.5",
     "web-vitals": "^2.1.4",
     "webpack-dev-server": "^4.13.3"

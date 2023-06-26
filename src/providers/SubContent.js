@@ -17,7 +17,7 @@ export const SubContent = ({ children }) => {
     const [contentError, setContentError] = useState(false); 
 
     const getContent = (id) => {
-        var config = {
+        let config = {
             method: 'get',
             maxBodyLength: Infinity,
             url: `${hook.api}/i/content-detail/${id}/`,

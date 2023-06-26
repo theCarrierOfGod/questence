@@ -1,0 +1,146 @@
+.activeTab {
+    background-color: #e6f1f3;
+}
+
+.alignCenter {
+    align-items: center;
+}
+
+.pl-20 {
+    padding-left: 20px;
+}
+
+button.menu-link {
+    background-color: transparent;
+    border: none;
+}
+
+.conMenu {
+    font-weight: 400;
+    font-size: 14px;
+    background: rgba(0, 121, 140, 0.05);
+    border-radius: 10px;
+    padding: 5px 10px;
+    display: inline-flex;
+    width: 100%;
+}
+
+.fg-1 {
+    flex-grow: 1;
+}
+
+.fg-0 {
+    flex-grow: 0;
+}
+
+.menu-link,
+.sm-menu-link {
+    font-family: 'Raleway';
+    padding: 7px 15px;
+    text-decoration: none;
+}
+
+.sm-menu-btn {
+    padding: 5px 20px 5px 20px;
+}
+
+.sm-menu-btn:hover {
+    cursor: pointer;
+}
+
+.sm-menu-link:hover {
+    background-color: #e6f1f3;
+    cursor: pointer;
+}
+
+.menu-link:focus,
+.menu-link:active,
+.btn:active {
+    border: none !important;
+}
+
+.ellMenu {
+    position: relative;
+}
+
+.ellMenu:hover > .editMenu {
+    display: block;
+}
+
+.editMenu {
+    display: none;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid gray;
+    border-radius: 7px;
+    overflow: hidden;
+    position: absolute;
+    right: 15px;
+    background: white;
+}
+
+.leftStraight {
+    min-height: 90%;
+    background: rgba(0, 121, 140, 0.1);
+    border-radius: 15px 0px 0px 15px;
+    width: 85px;
+}
+
+.rightStraight {
+    background: rgb(217, 235, 238);
+    background: linear-gradient(90deg, rgba(217, 235, 238, 1) 35%, rgba(242, 248, 249, 1) 35%);
+    min-height: 90%;
+    position: relative;
+    padding-left: 35%;
+    border-radius: 15px 15px;
+}
+
+.leftIds {
+    position: absolute;
+    left: 8px;
+    font-weight: bolder;
+}
+
+.no-list-style {
+    list-style: none;
+}
+
+.secMain>li {
+    padding: 5px 3px 5px 10px;
+    font-weight: 600;
+}
+
+.secMain>li:hover {
+    cursor: pointer;
+}
+
+.secMain>li>a {
+    width: 100%;
+    text-decoration: none;
+    color: black;
+}
+
+.mr-20 {
+    margin-right: 20px !important;
+}
+
+.mr-15 {
+    margin-right: 15px !important;
+}
+
+.mr-10 {
+    margin-right: 10px !important;
+}
+
+.mr-5 {
+    margin-right: 5px;
+}
+
+.ml-10 {
+    margin-left: 10px;
+}
+
+.pl-20 {
+    padding-left: 20px !important;
+}

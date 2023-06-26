@@ -1,28 +1,28 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
-import Login from './auth/Login';
-import BasicEdit from './pages/edit/BasicEdit';
-import Index from './pages/index/Index';
-import PageNotFound from './pages/notFound/PageNotFound';
+import Login from './login/Login';
+import PageNotFound from './notFound/PageNotFound';
 import { Auth } from './providers/Auth';
 import { Basic } from './providers/Basic';
 import { Hook } from './providers/Hook';
 import { New } from './providers/New';
 import { Edit } from './providers/Edit';
 import { RequireAuth } from './providers/RequireAuth';
-import MediaEdit from './pages/edit/MediaEdit';
-import ScheduleEdit from './pages/edit/ScheduleEdit';
 import { useEffect } from 'react';
-import GradingEdit from './pages/edit/GradingEdit';
-import CourseTeamEdit from './pages/edit/CourseTeamEdit';
-import SubmitEdit from './pages/edit/SubmitEdit';
-import ContentEdit from './pages/edit/ContentEdit';
 import { SubContent } from './providers/SubContent';
-import ResourceEdit from './pages/edit/ResourceEdit';
-import GroupEdit from './pages/edit/GroupEdit';
 import { EditCon } from './providers/EditContent';
 import { Detail } from './providers/Detail';
-import Forgot from './auth/Forgot';
+import Forgot from './forgotPassword/Forgot';
+import Home from './home/Home';
+import Authoring from './authoring/Authoring';
+import BasicSection from './authoring/sections/basic/BasicSection';
+import Footer from './footer/Footer';
+import GradingSection from './authoring/sections/grading/GradingSection';
+import ContentSection from './authoring/sections/content/ContentSection';
+import TeamSection from './authoring/sections/team/TeamSection';
+import ResourcesSection from './authoring/sections/resources/ResourcesSection';
+import SubmitSection from './authoring/sections/submit/SubmitSection';
+import AllContents from './authoring/sections/content/AllContents';
 
 function App() {
   const location = useLocation();
@@ -44,96 +44,79 @@ function App() {
                         exact
                         path="/"
                         element={
+                          <New>
+                            <Home />
+                          </New>
+                        }
+                      />
+                      <Route
+                        exact
+                        path="/authoring"
+                        element={
                           <RequireAuth>
                             <New>
-                              <Index />
-                            </New>                          </RequireAuth>}
+                              <Authoring />
+                            </New>
+                          </RequireAuth>
+                        }
                       />
                       <Route
                         exact
-                        path="/edit/basic/:id"
+                        path="/authoring/edit/basic/:id"
                         element={
                           <RequireAuth>
                             <Edit>
-                              <BasicEdit />
+                              <BasicSection />
+                              <Footer />
                             </Edit>
                           </RequireAuth>
                         }
                       />
                       <Route
                         exact
-                        path="/edit/media/:id"
+                        path="/authoring/edit/grading/:id"
                         element={
                           <RequireAuth>
                             <Edit>
-                              <MediaEdit />
+                              <GradingSection />
+                              <Footer />
                             </Edit>
                           </RequireAuth>
                         }
                       />
                       <Route
                         exact
-                        path="/edit/schedule/:id"
+                        path="/authoring/edit/courseTeam/:id"
                         element={
                           <RequireAuth>
                             <Edit>
-                              <ScheduleEdit />
+                              <TeamSection />
+                              <Footer />
                             </Edit>
                           </RequireAuth>
                         }
                       />
                       <Route
                         exact
-                        path="/edit/grading/:id"
+                        path="/authoring/edit/resources/:id"
                         element={
                           <RequireAuth>
                             <Edit>
-                              <GradingEdit />
+                              <ResourcesSection />
+                              <Footer />
                             </Edit>
                           </RequireAuth>
                         }
                       />
                       <Route
                         exact
-                        path="/edit/courseTeam/:id"
-                        element={
-                          <RequireAuth>
-                            <Edit>
-                              <CourseTeamEdit />
-                            </Edit>
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        exact
-                        path="/edit/group/:id"
-                        element={
-                          <RequireAuth>
-                            <Edit>
-                              <GroupEdit />
-                            </Edit>
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        exact
-                        path="/edit/resources/:id"
-                        element={
-                          <RequireAuth>
-                            <Edit>
-                              <ResourceEdit />
-                            </Edit>
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        exact
-                        path="/edit/content/:id"
+                        path="/authoring/edit/content/:id"
                         element={
                           <RequireAuth>
                             <Edit>
                               <EditCon>
-                                <ContentEdit />
+                                <AllContents />
+                                <Footer />
                               </EditCon>
                             </Edit>
                           </RequireAuth>
@@ -141,11 +124,12 @@ function App() {
                       />
                       <Route
                         exact
-                        path="/edit/submit/:id"
+                        path="/authoring/edit/submit/:id"
                         element={
                           <RequireAuth>
                             <Edit>
-                              <SubmitEdit />
+                              <SubmitSection />
+                              <Footer />
                             </Edit>
                           </RequireAuth>
                         }

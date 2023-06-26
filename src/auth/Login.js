@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { useAuth } from '../providers/Auth';
 import style from './login.module.css';
 import { Link } from 'react-router-dom';
-import Logo from '../images/logo.png'
+import Logo from '../images/thelogo2.png'
 import { NotificationContainer } from 'react-notifications';
 import Nav from '../components/nav/Nav';
+import Footer from '../components/footer/Footer';
 import './login.module.css'
 
 
@@ -51,6 +52,9 @@ const Login = () => {
                                     <div className='col-md-5'>
                                         <div className="card">
                                             <div className='card-body pt-4'>
+                                                <Link to={'/'} >
+                                                    <i className="fa fa-close text-danger" style={{ float: 'right' }}></i>
+                                                </Link>
                                                 <div className='m-2' style={{ textAlign: 'center' }}>
                                                     <img src={Logo} alt="Questence" width="150" />
                                                     <br />
@@ -61,7 +65,7 @@ const Login = () => {
                                                 <form className={`${style.modalBody} modal-body p-5`} onSubmit={e => handleLogin(e)}>
                                                     <div className="form-group mb-3">
                                                         <label className="label w-100" htmlFor="email" style={{ textAlign: 'center' }}>
-                                                            Email
+                                                            Username
                                                         </label>
                                                         <input type="text" name="text" id="email" required
                                                             onChange={(e) => setEmail(e.target.value)}
@@ -94,7 +98,7 @@ const Login = () => {
                     </tr>
                     <tr>
                         <td>
-
+                            <Footer />
                         </td>
                     </tr>
                 </tbody>

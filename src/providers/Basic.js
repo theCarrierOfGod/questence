@@ -1,10 +1,10 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useAuth } from "./Auth";
 import { useHook } from "./Hook";
 import { useEdit } from "./Edit";
-import { NotificationManager } from "react-notifications";
+import swal from "sweetalert";
+import { useLocation } from "react-router-dom";
 
 const BasicContext = createContext(null);
 
@@ -12,7 +12,8 @@ export const Basic = ({ children }) => {
     const hook = useHook();
     const auth = useAuth();
     const edit = useEdit();
-    let { id } = useParams();
+    const location = useLocation();
+    const id = window.localStorage.getItem('id');
     const [courseDetails, setCourseDetails] = useState([]);
     const [courseCode, setCourseCode] = useState([]);
     const [courseName, setCourseName] = useState([]);
@@ -32,11 +33,19 @@ export const Basic = ({ children }) => {
     const [subjectID, setSubjectID] = useState('');
     const [subjectName, setSubjectName] = useState('');
     const [subjectArray, setSubjectArray] = useState([]);
+    const [subjectGroupName, setSubjectGroupName] = useState([]);
     const [institutionArray, setInstitutionArray] = useState([])
-
-
     const [imageLink, setImageLink] = useState('');
     const [videoLink, setVideoLink] = useState('');
+
+    const [team, setTeam] = useState([]);
+    const [teamEmail, setTeamEmail] = useState('');
+    const [teamRole, setTeamRole] = useState('');
+
+    const [teamSet, setTeamset] = useState(false);
+    const [courseSet, setCourseSet] = useState(false);
+
+    const [disableBasicEdit, setDisableBasicEdit] = useState('');
 
     useEffect(() => {
         setCourseDetails([]);
@@ -55,10 +64,26 @@ export const Basic = ({ children }) => {
         setCoursePacing('');
         setEntranceExamRequired('');
         setSubjectID('')
-    }, [id])
+
+        return () => {
+            return true;
+        }
+    }, [id]);
+
+    const canEditBasic = (role) => {
+        if ((role === 'Reader')) {
+            setDisableBasicEdit(true);
+        } else if ((role === 'Author')) {
+            setDisableBasicEdit(true)
+        } else if ((role === 'Lead')) {
+            setDisableBasicEdit(false)
+        } else {
+            setDisableBasicEdit(false)
+        }
+    }
 
     const getCourse = (id) => {
-        var config = {
+        let config = {
             method: 'get',
             maxBodyLength: Infinity,
             url: `${hook.api}/i/course-detail/${id}`,
@@ -74,61 +99,77 @@ export const Basic = ({ children }) => {
                     alert(response.detail);
                 } else {
                     setCourseDetails(response.data[0]);
+                    // Course code 
                     if (response.data[0].code === null) {
                         setCourseCode('');
                     } else {
                         setCourseCode(response.data[0].code);
                     }
 
+                    // Course name 
                     if (response.data[0].name === null) {
                         setCourseName('');
                     } else {
                         setCourseName(response.data[0].name);
                     }
 
-                    
-                    if (response.data[0].short_description === null) {
+                    // Institution ID and Name 
+                    if (response.data[0].institution_id === null) {
                         setInstitutionID('');
-                        setInstitutionArray([])
                     } else {
                         setInstitutionID(response.data[0].institution_id.id);
-                        setInstitutionArray(response.data[0].institution_id)
                     }
                     setInstitutionName(response.data[0].institution_id);
+
+                    // Subject ID and Name 
+                    if (response.data[0].subject_id === null) {
+                        setSubjectID('')
+                        setSubjectName('');
+                        setSubjectGroupName('')
+                        setSubjectArray([])
+                    } else {
+                        setSubjectName(response.data[0].subject_id.subject_name)
+                        setSubjectID(response.data[0].subject_id.id)
+                        setSubjectArray(response.data[0].subject_id)
+                        setSubjectGroupName(response.data[0].subject_id.subject_group_id.id)
+                    }
+
+                    // Course description 
                     if (response.data[0].short_description === null) {
                         setCourseDescription('');
                     } else {
                         setCourseDescription(response.data[0].short_description);
                     }
+
+                    // Course Overview 
                     if (response.data[0].overview === null) {
                         setOverview('');
                     } else {
                         setOverview(response.data[0].overview);
                     }
-                    // setReleaseDate(response.data[0].intro_video);
-                    setEnrollmentType(response.data[0].enrollment_type);
+
+                    setEnrollmentType(response.data[0].enrollment_source);
                     setLevel(response.data[0].level)
                     setLanguage(response.data[0].language)
                     setCoursePacing(response.data[0].course_pacing)
                     setEntranceExamRequired(response.data[0].entrance_exam_required)
-                    setSubjectID(response.data[0].subject_id.id)
-                    setSubjectArray(response.data[0].subject_id);
-                    setSubjectName(response.data[0].subject_id.subject_group_id.id)
                     setVideoLink(response.data[0].intro_video);
                     setImageLink(response.data[0].card_image);
                 }
             })
     }
 
-    const processBasicForm = (e) => {
-        e.preventDefault();
-    }
-
     const handleSubmit = (id) => {
         edit.toggleEdit('basic');
-        NotificationManager.info('Saving...', 'Basic tab', 3000)
+        swal({
+            title: 'Basic Tab',
+            text: 'Saving...',
+            icon: 'info',
+            button: false,
+            timer: '3000'
+        })
 
-        var config = {
+        let config = {
             method: 'patch',
             maxBodyLength: Infinity,
             url: `${hook.api}/i/course-detail/`,
@@ -145,43 +186,9 @@ export const Basic = ({ children }) => {
                 "language": language,
                 "entrance_exam_required": entranceExamRequired,
                 "enrollment_type": enrollmentType,
-            },
-            headers: {
-                'Authorization': auth.token
-            }
-        };
-
-        axios(config)
-            .then(function (response) {
-                edit.setReadOnly(false);
-                edit.setIsEdit(false);
-                edit.setActiveEdit('');
-                if (response.data.id) {
-                    NotificationManager.success('Saved', 'Basic tab', 3000)
-                    getCourse(id);
-                    // NotificationManager.success(message, title, timeOut, callback, priority);
-                }
-            })
-            .catch(function (error) {
-                NotificationManager.error('Input the right data into all fields', 'Basic tab', 3000);
-                edit.setReadOnly(false);
-                edit.setIsEdit(false);
-                edit.setActiveEdit('');
-            });
-    }
-
-    const saveMedia = (id) => {
-        edit.toggleEdit('media');
-        NotificationManager.info('Saving...', 'Media tab', 3000)
-
-        var config = {
-            method: 'patch',
-            maxBodyLength: Infinity,
-            url: `${hook.api}/i/course-detail/`,
-            data: {
-                "id": id,
                 'card_image': imageLink,
-                'intro_video': videoLink
+                'intro_video': videoLink,
+                "course_pacing": coursePacing
             },
             headers: {
                 'Authorization': auth.token
@@ -190,29 +197,99 @@ export const Basic = ({ children }) => {
 
         axios(config)
             .then(function (response) {
-                edit.setReadOnly(false);
-                edit.setIsEdit(false);
-                edit.setActiveEdit('');
                 if (response.data.id) {
-                    NotificationManager.success('Saved', 'Media tab', 3000)
+                    swal({
+                        title: 'Basic Tab',
+                        text: 'Saved!',
+                        icon: 'success',
+                        button: false,
+                        timer: '3000'
+                    })
                     getCourse(id);
-                    // NotificationManager.success(message, title, timeOut, callback, priority);
+                    edit.setUnsaved(false)
                 }
             })
             .catch(function (error) {
-                NotificationManager.error(error.message, 'Media tab', 3000);
-                edit.setReadOnly(false);
-                edit.setIsEdit(false);
-                edit.setActiveEdit('');
+                swal({
+                    title: 'Basic Tab',
+                    text: 'Some required fields are missing!',
+                    icon: 'error',
+                    button: false,
+                    timer: '3000',
+                    dangerMode: true
+                })
             });
     }
 
-    const saveTeam = () => {
+    const myTeam = (id) => {
+        let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${hook.api}/i/course-team/${id}`,
+            headers: {
+                'Authorization': auth.token,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                setTeam(response.data)
+            });
 
     }
+
+    const addNewRole = (event) => {
+        event.preventDefault();
+        swal({
+            title: "Course Team",
+            timer: 2000
+        })
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${hook.api}/i/course-team/`,
+            headers: {
+                'Authorization': auth.token
+            },
+            data: {
+                "course_id": id,
+                "email": teamEmail,
+                "role": teamRole,
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                if (response.data.id) {
+
+                } else {
+                    // NotificationManager.error(response.data.detail, 'Team member', 5000);
+                }
+            })
+            .catch(function (error) {
+                // NotificationManager.error(error.message, 'Team member', 6000);
+            });
+    }
+
+    useEffect(() => {
+        if (window.localStorage.getItem('id')) {
+            if (!teamSet) {
+                myTeam(id);
+            }
+            if (!courseSet) {
+                getCourse(id);
+            }
+        }
+
+        return () => {
+            return false;
+        }
+    }, [id]);
 
     return (
-        <BasicContext.Provider value={{ subjectID, saveTeam, institutionArray, setInstitutionArray, subjectArray, setSubjectArray, setSubjectID, handleSubmit, saveMedia, videoLink, setVideoLink, imageLink, setImageLink, subjectName, setSubjectName, entranceExamRequired, setEntranceExamRequired, language, setLanguage, coursePacing, setCoursePacing, enrollmentType, setEnrollmentType, level, setLevel, getCourse, courseDetails, IntroImage, IntroVid, releaseDate, setCourseDetails, keywords, setKeywords, processBasicForm, courseCode, setCourseCode, courseName, setCourseName, institutionName, setInstitutionName, institutionID, setInstitutionID, courseDescription, setCourseDescription, overview, setOverview }}>
+        <BasicContext.Provider value={{ canEditBasic, disableBasicEdit, teamEmail, teamRole, setTeamEmail, setTeamRole, addNewRole, myTeam, team, setTeam, subjectGroupName, subjectID, institutionArray, setInstitutionArray, subjectArray, setSubjectArray, setSubjectID, handleSubmit, videoLink, setVideoLink, imageLink, setImageLink, subjectName, setSubjectName, entranceExamRequired, setEntranceExamRequired, language, setLanguage, coursePacing, setCoursePacing, enrollmentType, setEnrollmentType, level, setLevel, getCourse, courseDetails, IntroImage, IntroVid, releaseDate, setCourseDetails, keywords, setKeywords, courseCode, setCourseCode, courseName, setCourseName, institutionName, setInstitutionName, institutionID, setInstitutionID, courseDescription, setCourseDescription, overview, setOverview }}>
             {children}
         </BasicContext.Provider>
     )

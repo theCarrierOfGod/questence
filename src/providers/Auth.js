@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { NotificationManager } from 'react-notifications';
 import { useHook } from "./Hook";
+import swal from "sweetalert";
 
 const AuthContext = createContext(null);
 
@@ -11,6 +11,7 @@ export const Auth = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const hook = useHook();
+    const id = window.localStorage.getItem('id');
     const userName = window.localStorage.getItem('username');
     const token = window.localStorage.getItem('token');
     const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -46,8 +47,11 @@ export const Auth = ({ children }) => {
     }
 
     const logUserIn = (username, password) => {
-        NotificationManager.info('logging in', 'Login', 10000);
-        var config = {
+        swal("Login", "Loggin in...", "info", {
+            button: false,
+            timer: 15000,
+        });
+        let config = {
             method: 'post',
             maxBodyLength: Infinity,
             url: `https://tqfe-develop.herokuapp.com/cs/instructor-login/`,
@@ -63,13 +67,19 @@ export const Auth = ({ children }) => {
         axios(config)
             .then(function (response) {
                 storeActiveToken(response.data.user.username, response.data.token);
-                NotificationManager.success('success', 'Login', 1000);
+                swal("Success!", "You have been logged in!", "success", {
+                    button: false,
+                    timer: 1000,
+                });
                 setTimeout(() => {
                     navigate('/')
-                }, 3000);
+                }, 1200);
             })
             .catch(function (error) {
-                NotificationManager.error('failed', 'Login', 1000);
+                swal("Login", "An error occured while attempting to log you in!", "error", {
+                    button: false,
+                    timer: 3000,
+                });
             });
     }
 
@@ -93,7 +103,7 @@ export const Auth = ({ children }) => {
 
     const getChoices = () => {
         if (window.localStorage.getItem('username')) {
-            var config = {
+            let config = {
                 method: 'get',
                 maxBodyLength: Infinity,
                 url: `${hook.api}/i/choices/`,
@@ -116,18 +126,21 @@ export const Auth = ({ children }) => {
                 })
         }
     }
+    
 
     useEffect(() => {
         checkIfLoggedIn();
         sessionExpired();
-        getChoices()
-        return () => {
-            window.scrollTo(0, 0);
+        if(institutions.length === 0) {
+            getChoices();
         }
-    }, [location.key]);
+        return () => {
+            return true;
+        }
+    }, [location]);
 
     return (
-        <AuthContext.Provider value={{ userName, token, videosOptions, exerciseOptions, componentOptions, institutions, enrollmentChoices, levelChoices, subjectGroup, languageChoices, htmlOptions, getChoices, isLoggedIn, logUserIn, logOut }}>
+        <AuthContext.Provider value={{ id, userName, token, videosOptions, exerciseOptions, componentOptions, institutions, enrollmentChoices, levelChoices, subjectGroup, languageChoices, htmlOptions, getChoices, isLoggedIn, logUserIn, logOut }}>
             {children}
         </AuthContext.Provider>
     )

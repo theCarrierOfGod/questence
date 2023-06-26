@@ -3,8 +3,9 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./Auth";
 import { useHook } from "./Hook";
 import { useDetail } from "./Detail";
-import { useLocation } from 'react-router-dom';
-import { NotificationManager } from "react-notifications";
+import { useLocation, useNavigate } from 'react-router-dom';
+import swal from 'sweetalert'
+import { useBasic } from "./Basic";
 
 const NewContext = createContext(null);
 
@@ -12,6 +13,8 @@ export const New = ({ children }) => {
 
     const auth = useAuth();
     const detail = useDetail();
+    const basic = useBasic();
+    const navigate = useNavigate();
     const hook = useHook();
     const location = useLocation();
     const [addNow, setAddNow] = useState(false);
@@ -21,11 +24,11 @@ export const New = ({ children }) => {
     const [programCount, setProgramCount] = useState(0);
     const [loadingMessage, setLoadingMessage] = useState('Fetching data...');
     const [addSection, setAddSection] = useState(false);
-    const [now, setNow] = useState('');
     const [nextSub, setNextSub] = useState(0);
     const [nextLes, setNextLes] = useState('');
     const [newSub, setNewSub] = useState(false);
     const [newLes, setNewLes] = useState(false);
+    const [savingNew, setSavingNew] = useState(false);
 
 
     const addNew = () => {
@@ -41,7 +44,7 @@ export const New = ({ children }) => {
         setLoadingMessage('Fetching your courses...');
         setPrograms([]);
         setProgramCount(0);
-        var config = {
+        let config = {
             method: 'get',
             maxBodyLength: Infinity,
             url: `${hook.api}/i/course-list/`,
@@ -65,7 +68,8 @@ export const New = ({ children }) => {
     // start new course on index page starts 
     const startNewCourse = (e) => {
         e.preventDefault();
-        var config = {
+        setSavingNew(true);
+        let config = {
             method: 'post',
             maxBodyLength: Infinity,
             url: `${hook.api}/i/course-detail/`,
@@ -80,44 +84,76 @@ export const New = ({ children }) => {
 
         axios(config)
             .then(function (response) {
-                setAddNow(false);
-                console.log(response)
+                if (response.data.id) {
+                    setSavingNew(false);
+                    swal("Add course", "Course added!", "success", {
+                        button: false,
+                        timer: 2000,
+                    })
+                        .then((response) => {
+                            setAddNow(false)
+                        });
+                }
             })
             .catch(function (error) {
-                // console.log(error);
+                setSavingNew(false);
                 setAddNow(false);
+                swal("Add course", "An error occured while adding !", "error", {
+                    button: false,
+                    timer: 2000,
+                });
             });
     }
 
+    // delete course on index page 
     const deleteCourse = (id) => {
-        if (window.confirm("Are you sure you want to delete this course?") === true) {
-            NotificationManager.info('Deleting', 'Course');
-            var config = {
-                method: 'delete',
-                maxBodyLength: Infinity,
-                url: `${hook.api}/i/course-detail/`,
-                headers: {
-                    'Authorization': auth.token
-                },
-                data: {
-                    "id": id,
-                    "course_id": id,
+        let config = {
+            method: 'delete',
+            maxBodyLength: Infinity,
+            url: `${hook.api}/i/course-detail/`,
+            headers: {
+                'Authorization': auth.token
+            },
+            data: {
+                "id": id,
+                "course_id": id,
+            }
+        };
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this course!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    swal("Deleting...", {
+                        icon: 'info',
+                        timer: 2000,
+                        button: false
+                    });
+                    axios(config)
+                        .then(function (response) {
+                            swal("Delete Course", "Course deleted!", "success", {
+                                button: false,
+                                timer: 2000,
+                            });
+                            getMyPrograms();
+                        })
+                        .catch(function (error) {
+                            swal("Delete Course", "Courses containing contents cannot be deleted!", "error", {
+                                button: false,
+                                timer: 3000,
+                            });
+                        });
+                } else {
+                    swal("Cancelled by user", {
+                        icon: 'info',
+                        timer: 2000
+                    });
                 }
-            };
-
-            axios(config)
-                .then(function (response) {
-                    console.log(response)
-                    NotificationManager.success('Course deleted', 'Delete Course');
-                    getMyPrograms();
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    NotificationManager.error('You cannot delete a course with sections', 'Delete Course');
-                });
-        } else {
-            return false;
-        }
+            });
     }
     // start new course on index page ends 
 
@@ -132,7 +168,7 @@ export const New = ({ children }) => {
     }
 
     const sectionCount = (id) => {
-        var config = {
+        let config = {
             method: 'get',
             maxBodyLength: Infinity,
             url: `${hook.api}/i/course-section/`,
@@ -192,13 +228,18 @@ export const New = ({ children }) => {
         }
     }
 
+    const enterEdit = (role, program_id) => {
+        window.localStorage.setItem('role', role)
+        navigate(`/authoring/edit/basic/${program_id}`);
+    }
+
     useEffect(() => {
         setAddSection(false)
     }, [location])
 
 
     return (
-        <NewContext.Provider value={{ newLes, nextLes, subSectionSpecs, sectionSpecs, addSection, newSub, nextSub, toggleAddLesson, toggleAddSubsSection, setAddSection, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
+        <NewContext.Provider value={{ enterEdit, newLes, nextLes, subSectionSpecs, setNextLes, sectionSpecs, addSection, newSub, nextSub, toggleAddLesson, toggleAddSubsSection, setAddSection, savingNew, setSavingNew, toggleAddSection, sectionCount, getMyPrograms, programs, programCount, startNewCourse, deleteCourse, addNow, newCourseName, newCourseCode, setNewCourseName, setNewCourseCode, addNew, loadingMessage }}>
             {children}
         </NewContext.Provider>
     )
